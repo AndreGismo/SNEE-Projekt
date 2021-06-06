@@ -4,22 +4,9 @@ Created on Wed May 19 17:28:30 2021
 
 @author: andre
 Klasse für den Akku vom E-Auto. Aus Werten wie Kapazität, Ladeleistung, Lade-
-schlussspannung und -strom etc. wird ein Ladeprofil erzeugt. Dieses Ladeprofil
-wird dann dem E-Auto übergeben.
-Das fertige Lastprofil muss bereits vor dem Aufruf von
-pp.timeseries.run_timeseries vorliegen
- 
-------------------------------------------------------------------------------
-EDIT: es wird eigentlich nur die aktuelle Ladeleistung beim aktuellen soc
-      berechnet, anstatt die komplette Kurve zu speichern
-------------------------------------------------------------------------------
-EDIT: dann mal run_battery (immer nur ein timestep: also erst
-      calc_load_curve, dann calc_soc) programmieren und ausprobieren
-------------------------------------------------------------------------------
-EDIT: eigentlich interessiert es ja nicht, wann der Verbrauch zustande
-      gekommen ist, sondern nur, wie viel bis zum Beginn vom Ladevorgang
-      verbraucht worden ist => alle Werte auf 0 setzen und erst bei load_start
-      beginnen mit capacity-used_energy
+schlussspannung und -strom etc. wird ein Kennlinie von P(SOC) erstellt. Dann
+kann zu jedem Zeitpunkt in Abhängigkeit des SOC die aktuelle Ladeleistung P
+abgelesen werden.
 """
 import numpy as np
 import pandas as pd
@@ -30,74 +17,49 @@ class Battery:
     '''
     Objekte repräsentieren den Akku eines E-Fahrzeugs.
     '''
-    def __init__(self, energy_used, p_load_max, load_switch, capacity, u_norm,
-                 u_ls, i_ls, load_start):
-        '''
-        Objekte repräsentieren den Akku eines E-Fahrzeugs. "energy_used" gibt
-        die seit dem letzten Ladevorgang verbrauchte Energie an. "p_load_max"
-        gibt die maximale Ladeleistung an. "load_switch" gibt an, ab welchem
-        Teil der Akkuladung die Ladeleistung einbricht. "capacity" gibt die
-        Kapazität des Akkus an. "u_norm" ist die Nennspannung, "u_ls" die
-        Ladeschluss-Spannung, "i_ls" der Ladeschluss-Strom und "load_start"
-        ist die Uhrzeit, wann der Ladevorgang beginnen soll.
-
-        Parameters
-        ----------
-        energy_used : float
-            seit dem letzten Ladevorgang verbrauchte Energie [kWh]
-        p_load_max : float
-            maximale Ladeleistung [kW]
-        load_switch : float
-            Ladestand, ab dem die Ladeleistung abfällt [100%]
-        capacity : float
-            Kapazität des Akkus [kWh]
-        u_norm : float
-            Nennspannung des Akkus [V]
-        u_ls : float
-            Ladeschluss-Spannung des Akkus [V]
-        i_ls : float
-            Ladeschluss-Strom des Akkus [A]
-        load_start : int
-            Uhrzeit [hh], wann der Ladevorgang beginnt
-
-        Returns
-        -------
-        None.
-
-        '''
-        self.energy_used = energy_used
-        self.p_load_max = p_load_max
-        self.load_switch = load_switch
-        self.capacity = capacity
-        self.soc = self.capacity-self.energy_used
-        self.u_norm = u_norm
+    def __init__(self, e_bat, p_const, u_ls=4.2, u_n=3.6, i_ls=0.03, s=80):
+        self.e_bat = e_bat
+        self.p_const = p_const
         self.u_ls = u_ls
+        self.u_n = u_n
         self.i_ls = i_ls
-        self.p_load = None
-        self.calc_p_load()
-        self.load_start = load_start
-        self.is_logging = False
-        self.timeseries = pd.DataFrame([[0, 0] for i in range(96)],
-                                       columns=['soc [kWh]', 'p_load [kW]'])
+        self.s = s
+        self.load_curve = self.calc_load_curve()
         
-    def calc_p_load(self):
-        p_ls = self.u_ls/self.u_norm*self.i_ls*self.capacity
-        i_ls = (1-self.load_switch)/np.log(self.p_load_max/p_ls)
-        self.p_load = self.p_load_max-np.exp((self.load_switch-self.soc/self.capacity)/i_ls)
+    def calc_load_curve(self):
+        soc = np.linspace(0, 100, 101)
+        p_ls = self.u_ls/self.u_n * self.i_ls * self.e_bat
+        k_l = (100-self.s)/(np.log(self.p_const/p_ls))
+        p = self.p_const*np.exp((self.s-soc)/k_l)    
+        # bis zu s % Ladestand ist P = P_konst
+        p[:self.s] = self.p_const
+        # für 100% Ladestand ist P = 0
+        p[-1] = 0
+        return p
+    
+    def calc_load_profile(self, load_kwh):
+        length = 96
+        time = np.linspace(0, length-1, length)
+        load = []
+        power = []
+        load_percent = load_kwh/self.e_bat
         
-    def calc_soc(self):
-        self.soc += self.p_load/4
-        
-    def run_battery(self):
-        i = 0
-        while self.soc <= self.capacity-4:
-            if self.is_logging:
-                self.timeseries.loc[i, 'soc [kWh]'] = self.soc
-                self.timeseries.loc[i, 'p_load [kW]'] = self.p_load
-            self.calc_p_load()
-            self.calc_soc()
-            i += 1
-        self.timeseries = ppt.shift_profile(self.timeseries, self.load_start*8)
+        for sec in time:
+            if load_percent < 101:
+                load_percent = int(np.round(load_kwh/self.e_bat*100, 0))
+                # damit der Ladestand nicht größer 100 wird
+                if load_percent > 100:
+                    load_percent = 100
+                load_kwh += self.load_curve[load_percent]/4
+                load.append(load_kwh)
+                power.append(self.load_curve[load_percent])
             
-    def start_log(self):
-        self.is_logging = True
+        load = np.array(load)
+        power = np.array(power)
+        
+        return power
+        
+        
+        
+        
+        
