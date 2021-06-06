@@ -8,6 +8,7 @@ np.roll zum variieren der Zeit, wann der Ladevorgang beginnt
 """
 import numpy as np
 import pandas as pd
+import battery as bat
 
 
 def scale_df(df, consumption_year):
@@ -317,6 +318,15 @@ def get_bus_indices(line, net):
             bus_indices.append(str(net.bus['name'].index[num]))
             
     return bus_indices
+
+
+def calc_load_profile_ecar(e_bat, p_const, dist_trav, consumption, arrival):
+    battery = bat.Battery(e_bat, p_const)
+    energy_used = dist_trav*consumption/100
+    energy_start = e_bat - energy_used
+    profile = battery.calc_load_profile(energy_start)
+    profile = np.roll(profile, arrival)
+    return profile * 1000
     
         
     
