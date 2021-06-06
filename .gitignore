@@ -1,3 +1,11 @@
 .ipynb_checkpoints
 __pycache__
 *.ipynb
+*.html
+res_bus
+res_line
+res_trafo
+*.csv
+Test_Battery_ECar.py
+ecar.py
+kerber_timeseries.py

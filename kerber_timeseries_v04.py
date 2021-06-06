@@ -124,11 +124,21 @@ ax_load.set_ylabel('Leistung [kW]')
 
 # Zeichnen, wie die Spannung über den einzelnen Strängen von Knoten zu
 # Knoten abfällt
-buses_in9 = ppt.get_bus_indices('9', net)
-volts = results_bus.loc['2020-01-01 18:00:00', buses_in9].values
+buses_in_x = []
+for i in range(1, 11):
+    buses_in_x.append(ppt.get_bus_indices(str(i), net))
+                      
 fig_bus_volt, ax_bus_volt = plt.subplots(1, 1, figsize=(15,8))
-ax_bus_volt.plot(list(range(len(volts))), volts, '-x')
-
+for i in range(1, 11):
+    volts = results_bus.loc['2020-01-01 18:00:00', buses_in_x[i-1]].values
+    ax_bus_volt.plot(list(range(len(volts))), volts, '-x',
+                     label=f'Verlauf der Spannung im Strang Nr. {i}')
+    
+ax_bus_volt.legend()
+ax_bus_volt.grid()
+ax_bus_volt.set_title('Verlauf der Spannung in den einzelnen Strängen')
+ax_bus_volt.set_xlabel('Knoten Nr. ausgehend vom Transformator')
+ax_bus_volt.set_ylabel('Spannung [V]')
 
 #### Das Netwerk graphisch darstellen ########################################
 # trace, die alle buses enthält, die eine Ladesäule haben
