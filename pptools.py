@@ -130,6 +130,7 @@ def add_emobility(df, net, profile, penetration):
         according_bus = net.bus.index[net.load.loc[choosen, 'bus']]
         choosen_bus.append(according_bus)
         #Profil vom Ladevorgang überlagern
+        # Profil neu berechnen erstmal
         df.loc[:, [choice]] += profile.iloc[:].values
     return choosen_bus
 

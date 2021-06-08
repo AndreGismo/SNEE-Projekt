@@ -27,10 +27,15 @@ from battery import Battery
 
 
 
+
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
+CARS = []
+for i in range(len(net.load.index)):
+    CARS.append(np.random.choice([0, 1, 2, 3], p=[0.05, 0.17, 0.12, 0.05]))
+    
 #### Daten für die einzelnen loads erzeugen (96, 146) ########################
 # das sind die Daten vom 13.12.2020, weil es da den höchsten peak gab
 data_nuernberg = pd.read_csv('Daten/Lastprofil/Nuernberg_absolut_final.csv')
@@ -43,7 +48,8 @@ data_nuernberg.drop('Unnamed: 0', axis=1, inplace=True)
 # data_ecar.index = data_nuernberg.index
 
 # Ladeprofil eines eFahrzeugs berechnen
-profile = ppt.calc_load_profile_ecar(50, 11, 200, 15, 40)  
+# ppt.calc_load_profile_ecar(Kapazität, P_max, gefahren_km, Verbrauch_100km, Ankunft in viertelstunden) 
+profile = ppt.calc_load_profile_ecar(50, 3.6, 30, 15, 40)  
 
 fig_eload, ax_eload = plt.subplots(1, 1, figsize=(15, 8))
 ax_eload.plot(list(range(len(profile))), profile, '-x')
@@ -58,7 +64,7 @@ data_ecar.index = data_nuernberg.index
 for i in range(len(net.load)-1):
     data_nuernberg[i+1] = data_nuernberg[data_nuernberg.columns[0]]
 
-choices = ppt.add_emobility(data_nuernberg, net, data_ecar, 20)
+choices = ppt.add_emobility(data_nuernberg, net, data_ecar, 100)
 print('buses der gewählten Loads: ', choices)
 #data_nuernberg.columns = net.load.index
 data_nuernberg /= 1e6
@@ -143,7 +149,7 @@ for i in range(1, 11):
                       
 fig_bus_volt, ax_bus_volt = plt.subplots(1, 1, figsize=(15,8))
 for i in range(1, 11):
-    volts = results_bus.loc['2020-01-01 18:00:00', buses_in_x[i-1]].values
+    volts = results_bus.loc['2020-01-01 10:00:00', buses_in_x[i-1]].values
     ax_bus_volt.plot(list(range(len(volts))), volts, '-x',
                      label=f'Verlauf der Spannung im Strang Nr. {i}')
     
@@ -163,3 +169,5 @@ figure.add_trace(go.Scatter(x=net.bus_geodata.loc[choices, 'x'],
 figure.show()
 
 
+bat = Battery(50, 11, )
+bat.s = 90
