@@ -25,7 +25,6 @@ pio.renderers.default = 'browser'
 import pptools as ppt
 from battery import Battery
 
-# Wahrscheinlichkeit, wann das Auto zurückkommt für jede Stunde am Tag (0...23)
 
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
@@ -36,25 +35,6 @@ net = pn.create_kerber_vorstadtnetz_kabel_1()
 data_nuernberg = pd.read_csv('Daten/Lastprofil/Nuernberg_absolut_final.csv')
 # die nervige Spalte weg
 data_nuernberg.drop('Unnamed: 0', axis=1, inplace=True)
-
-# data_ecar = data_nuernberg
-# data_ecar = pd.DataFrame(np.zeros(96))
-# data_ecar.iloc[60:75, 0] = 3600
-# data_ecar.index = data_nuernberg.index
-
-# Ladeprofil eines eFahrzeugs berechnen
-# ppt.calc_load_profile_ecar(Kapazität, P_max, gefahren_km, Verbrauch_100km, Ankunft in viertelstunden) 
-#profile = ppt.calc_load_profile_ecar(50, 3.6, 30, 15, 40)  
-
-#fig_eload, ax_eload = plt.subplots(1, 1, figsize=(15, 8))
-#ax_eload.plot(list(range(len(profile))), profile, '-x')
-#ax_eload.set_title('Ladeprofil des spezifizierten E-Fahrzeugs')
-#ax_eload.set_xlabel('Zeit')
-#ax_eload.set_ylabel('Ladeleistung [kW]')
-
-#data_ecar = pd.DataFrame(profile)
-#data_ecar.index = data_nuernberg.index
-#data_ecar *= 1000
     
 for i in range(len(net.load)-1):
     data_nuernberg[i+1] = data_nuernberg[data_nuernberg.columns[0]]
@@ -63,7 +43,6 @@ choices = ppt.add_emobility(data_nuernberg, net, 100)
 print('buses der gewählten Loads: ', choices)
 #data_nuernberg.columns = net.load.index
 data_nuernberg /= 1e6
-
 
 
 #### data source erzeugen ####################################################
@@ -128,7 +107,7 @@ ax_line.set_ylabel('Auslastung [%]')
 
 
 fig_load, ax_load = plt.subplots(1, 1, figsize=(15, 8))
-ax_load.plot(data_nuernberg[np.random.choice(data_nuernberg.columns, 5)]*1000,
+ax_load.plot(data_nuernberg[np.random.choice(data_nuernberg.columns, 10)]*1000,
              '-x')
 ax_load.set_title('Profile von fünf zufällig ausgewählte Lasten')
 ax_load.grid()
@@ -144,7 +123,7 @@ for i in range(1, 11):
                       
 fig_bus_volt, ax_bus_volt = plt.subplots(1, 1, figsize=(15,8))
 for i in range(1, 11):
-    volts = results_bus.loc['2020-01-01 10:00:00', buses_in_x[i-1]].values
+    volts = results_bus.loc['2020-01-01 18:00:00', buses_in_x[i-1]].values
     ax_bus_volt.plot(list(range(len(volts))), volts, '-x',
                      label=f'Verlauf der Spannung im Strang Nr. {i}')
     
@@ -163,6 +142,3 @@ figure.add_trace(go.Scatter(x=net.bus_geodata.loc[choices, 'x'],
                             mode='markers'))
 figure.show()
 
-
-bat = Battery(50, 11, )
-bat.s = 90

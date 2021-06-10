@@ -11,7 +11,11 @@ import pandas as pd
 import battery as bat
 
 # Wahrscheinlichkeit, wann das Auto zurückkommt für jede Stunde am Tag (0...23)
-ARRIVALS = pd.read_csv('arrivals.csv', index_col='hour')
+ARRIVALS = pd.read_csv('Daten/Statistiken/arrivals.csv', index_col='hour')
+
+# Wahrscheinlichkeit, dass eine bestimmte Strecke am Tag zurückgelegt wird
+DISTANCES = pd.read_csv('Daten/Statistiken/distances.csv',
+                        index_col='distance [km]')
 
 
 def scale_df(df, consumption_year):
@@ -132,11 +136,14 @@ def add_emobility(df, net, penetration):
         # den der gewählten load entsprechenden bus bestimmen
         according_bus = net.bus.index[net.load.loc[choosen, 'bus']]
         choosen_bus.append(according_bus)
-        #Profil vom Ladevorgang überlagern
         # Profil neu berechnen erstmal
-        profile = calc_load_profile_ecar(50, 11, 50, 20,
-                    arrival=np.random.choice(np.array(list(range(24)))*4,
-                                                      p=ARRIVALS['arrival percent'].values))
+        distance = np.random.choice(np.array(DISTANCES.index),
+                                    p=DISTANCES['probability'].values)
+        arrival=np.random.choice(np.array(list(range(24)))*4,
+                                 p=ARRIVALS['arrival percent'].values)
+        profile = calc_load_profile_ecar(50, 11, distance, 20,
+                    arrival)
+        #Profil vom Ladevorgang überlagern
         df.loc[:, [choice]] += profile.iloc[:].values
     return choosen_bus
 
