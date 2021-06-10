@@ -25,16 +25,11 @@ pio.renderers.default = 'browser'
 import pptools as ppt
 from battery import Battery
 
-
-
+# Wahrscheinlichkeit, wann das Auto zurückkommt für jede Stunde am Tag (0...23)
 
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
 net = pn.create_kerber_vorstadtnetz_kabel_1()
-
-CARS = []
-for i in range(len(net.load.index)):
-    CARS.append(np.random.choice([0, 1, 2, 3], p=[0.05, 0.17, 0.12, 0.05]))
     
 #### Daten für die einzelnen loads erzeugen (96, 146) ########################
 # das sind die Daten vom 13.12.2020, weil es da den höchsten peak gab
@@ -49,22 +44,22 @@ data_nuernberg.drop('Unnamed: 0', axis=1, inplace=True)
 
 # Ladeprofil eines eFahrzeugs berechnen
 # ppt.calc_load_profile_ecar(Kapazität, P_max, gefahren_km, Verbrauch_100km, Ankunft in viertelstunden) 
-profile = ppt.calc_load_profile_ecar(50, 3.6, 30, 15, 40)  
+#profile = ppt.calc_load_profile_ecar(50, 3.6, 30, 15, 40)  
 
-fig_eload, ax_eload = plt.subplots(1, 1, figsize=(15, 8))
-ax_eload.plot(list(range(len(profile))), profile, '-x')
-ax_eload.set_title('Ladeprofil des spezifizierten E-Fahrzeugs')
-ax_eload.set_xlabel('Zeit')
-ax_eload.set_ylabel('Ladeleistung [kW]')
+#fig_eload, ax_eload = plt.subplots(1, 1, figsize=(15, 8))
+#ax_eload.plot(list(range(len(profile))), profile, '-x')
+#ax_eload.set_title('Ladeprofil des spezifizierten E-Fahrzeugs')
+#ax_eload.set_xlabel('Zeit')
+#ax_eload.set_ylabel('Ladeleistung [kW]')
 
-data_ecar = pd.DataFrame(profile)
-data_ecar.index = data_nuernberg.index
+#data_ecar = pd.DataFrame(profile)
+#data_ecar.index = data_nuernberg.index
 #data_ecar *= 1000
     
 for i in range(len(net.load)-1):
     data_nuernberg[i+1] = data_nuernberg[data_nuernberg.columns[0]]
 
-choices = ppt.add_emobility(data_nuernberg, net, data_ecar, 100)
+choices = ppt.add_emobility(data_nuernberg, net, 100)
 print('buses der gewählten Loads: ', choices)
 #data_nuernberg.columns = net.load.index
 data_nuernberg /= 1e6

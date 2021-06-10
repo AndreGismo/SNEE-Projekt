@@ -10,6 +10,9 @@ import numpy as np
 import pandas as pd
 import battery as bat
 
+# Wahrscheinlichkeit, wann das Auto zurückkommt für jede Stunde am Tag (0...23)
+ARRIVALS = pd.read_csv('arrivals.csv', index_col='hour')
+
 
 def scale_df(df, consumption_year):
     '''
@@ -84,7 +87,7 @@ def add_ecars(df, net, profile, every_nth):
     return df
 
 
-def add_emobility(df, net, profile, penetration):
+def add_emobility(df, net, penetration):
     '''
     load_profile = pptools.add_emobility(load_profile, net, e_profile, penetration)
     
@@ -131,6 +134,9 @@ def add_emobility(df, net, profile, penetration):
         choosen_bus.append(according_bus)
         #Profil vom Ladevorgang überlagern
         # Profil neu berechnen erstmal
+        profile = calc_load_profile_ecar(50, 11, 50, 20,
+                    arrival=np.random.choice(np.array(list(range(24)))*4,
+                                                      p=ARRIVALS['arrival percent'].values))
         df.loc[:, [choice]] += profile.iloc[:].values
     return choosen_bus
 
@@ -327,6 +333,7 @@ def calc_load_profile_ecar(e_bat, p_const, dist_trav, consumption, arrival):
     energy_start = e_bat - energy_used
     profile = battery.calc_load_profile(energy_start)
     profile = np.roll(profile, arrival)
+    profile = pd.DataFrame(profile)
     return profile * 1000
     
         
