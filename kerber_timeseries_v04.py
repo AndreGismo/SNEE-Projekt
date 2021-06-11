@@ -26,6 +26,9 @@ import pptools as ppt
 from battery import Battery
 
 
+#### Szenario laden ##########################################################
+scenario = pd.read_csv('Daten/Statistiken/scenario30.csv')
+scenario.drop('Unnamed: 0', axis=1, inplace=True)
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
 net = pn.create_kerber_vorstadtnetz_kabel_1()
@@ -39,7 +42,8 @@ data_nuernberg.drop('Unnamed: 0', axis=1, inplace=True)
 for i in range(len(net.load)-1):
     data_nuernberg[i+1] = data_nuernberg[data_nuernberg.columns[0]]
 
-choices = ppt.add_emobility(data_nuernberg, net, 100)
+#choices, scenario_data = ppt.add_emobility(data_nuernberg, net, 30, True)
+choices = ppt.add_emobility_like_scenario(data_nuernberg, net, scenario)
 print('buses der gewählten Loads: ', choices)
 #data_nuernberg.columns = net.load.index
 data_nuernberg /= 1e6
