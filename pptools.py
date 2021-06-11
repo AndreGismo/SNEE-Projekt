@@ -10,6 +10,17 @@ import numpy as np
 import pandas as pd
 import battery as bat
 
+# Wahrscheinlichkeit, wann das Auto zurückkommt für jede Stunde am Tag (0...23)
+ARRIVALS = pd.read_csv('Daten/Statistiken/arrivals.csv', index_col='hour')
+
+# Wahrscheinlichkeit, dass eine bestimmte Strecke am Tag zurückgelegt wird
+DISTANCES = pd.read_csv('Daten/Statistiken/distances.csv',
+                        index_col='distance [km]')
+
+# Welche Ladesäulen-Leistungen mit welcher Wahrscheinlichkeit
+POWERS = pd.read_csv('Daten/Statistiken/powers.csv',
+                     index_col='power [kW]')
+
 
 def scale_df(df, consumption_year):
     '''
@@ -84,7 +95,7 @@ def add_ecars(df, net, profile, every_nth):
     return df
 
 
-def add_emobility(df, net, profile, penetration):
+def add_emobility(df, net, penetration):
     '''
     load_profile = pptools.add_emobility(load_profile, net, e_profile, penetration)
     
@@ -129,6 +140,15 @@ def add_emobility(df, net, profile, penetration):
         # den der gewählten load entsprechenden bus bestimmen
         according_bus = net.bus.index[net.load.loc[choosen, 'bus']]
         choosen_bus.append(according_bus)
+        # Profil neu berechnen erstmal
+        power = np.random.choice(np.array(POWERS.index),
+                                 p=POWERS['probability'].values)
+        distance = np.random.choice(np.array(DISTANCES.index),
+                                    p=DISTANCES['probability'].values)
+        arrival=np.random.choice(np.array(list(range(24)))*4,
+                                 p=ARRIVALS['arrival percent'].values)
+        
+        profile = calc_load_profile_ecar(50, power, distance, 20, arrival)
         #Profil vom Ladevorgang überlagern
         df.loc[:, [choice]] += profile.iloc[:].values
     return choosen_bus
@@ -326,6 +346,7 @@ def calc_load_profile_ecar(e_bat, p_const, dist_trav, consumption, arrival):
     energy_start = e_bat - energy_used
     profile = battery.calc_load_profile(energy_start)
     profile = np.roll(profile, arrival)
+    profile = pd.DataFrame(profile)
     return profile * 1000
     
         

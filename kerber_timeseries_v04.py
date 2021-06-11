@@ -26,43 +26,23 @@ import pptools as ppt
 from battery import Battery
 
 
-
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
 net = pn.create_kerber_vorstadtnetz_kabel_1()
-
+    
 #### Daten für die einzelnen loads erzeugen (96, 146) ########################
 # das sind die Daten vom 13.12.2020, weil es da den höchsten peak gab
 data_nuernberg = pd.read_csv('Daten/Lastprofil/Nuernberg_absolut_final.csv')
 # die nervige Spalte weg
 data_nuernberg.drop('Unnamed: 0', axis=1, inplace=True)
-
-# data_ecar = data_nuernberg
-# data_ecar = pd.DataFrame(np.zeros(96))
-# data_ecar.iloc[60:75, 0] = 3600
-# data_ecar.index = data_nuernberg.index
-
-# Ladeprofil eines eFahrzeugs berechnen
-profile = ppt.calc_load_profile_ecar(50, 11, 200, 15, 40)  
-
-fig_eload, ax_eload = plt.subplots(1, 1, figsize=(15, 8))
-ax_eload.plot(list(range(len(profile))), profile, '-x')
-ax_eload.set_title('Ladeprofil des spezifizierten E-Fahrzeugs')
-ax_eload.set_xlabel('Zeit')
-ax_eload.set_ylabel('Ladeleistung [kW]')
-
-data_ecar = pd.DataFrame(profile)
-data_ecar.index = data_nuernberg.index
-#data_ecar *= 1000
     
 for i in range(len(net.load)-1):
     data_nuernberg[i+1] = data_nuernberg[data_nuernberg.columns[0]]
 
-choices = ppt.add_emobility(data_nuernberg, net, data_ecar, 20)
+choices = ppt.add_emobility(data_nuernberg, net, 100)
 print('buses der gewählten Loads: ', choices)
 #data_nuernberg.columns = net.load.index
 data_nuernberg /= 1e6
-
 
 
 #### data source erzeugen ####################################################
@@ -126,10 +106,11 @@ ax_line.set_xlabel('Zeitpunkt [MM-TT hh]')
 ax_line.set_ylabel('Auslastung [%]')
 
 
+samples = 10
 fig_load, ax_load = plt.subplots(1, 1, figsize=(15, 8))
-ax_load.plot(data_nuernberg[np.random.choice(data_nuernberg.columns, 5)]*1000,
+ax_load.plot(data_nuernberg[np.random.choice(data_nuernberg.columns, samples)]*1000,
              '-x')
-ax_load.set_title('Profile von fünf zufällig ausgewählte Lasten')
+ax_load.set_title('Profile von {} zufällig ausgewählte Lasten'.format(samples))
 ax_load.grid()
 ax_load.set_xlabel('Zeitpunkt [MM-TT hh]')
 ax_load.set_ylabel('Leistung [kW]')
