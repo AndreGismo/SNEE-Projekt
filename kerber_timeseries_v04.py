@@ -106,10 +106,11 @@ ax_line.set_xlabel('Zeitpunkt [MM-TT hh]')
 ax_line.set_ylabel('Auslastung [%]')
 
 
+samples = 10
 fig_load, ax_load = plt.subplots(1, 1, figsize=(15, 8))
-ax_load.plot(data_nuernberg[np.random.choice(data_nuernberg.columns, 10)]*1000,
+ax_load.plot(data_nuernberg[np.random.choice(data_nuernberg.columns, samples)]*1000,
              '-x')
-ax_load.set_title('Profile von fünf zufällig ausgewählte Lasten')
+ax_load.set_title('Profile von {} zufällig ausgewählte Lasten'.format(samples))
 ax_load.grid()
 ax_load.set_xlabel('Zeitpunkt [MM-TT hh]')
 ax_load.set_ylabel('Leistung [kW]')
@@ -141,4 +142,5 @@ figure.add_trace(go.Scatter(x=net.bus_geodata.loc[choices, 'x'],
                             y=net.bus_geodata.loc[choices, 'y'],
                             mode='markers'))
 figure.show()
+
 

@@ -17,6 +17,10 @@ ARRIVALS = pd.read_csv('Daten/Statistiken/arrivals.csv', index_col='hour')
 DISTANCES = pd.read_csv('Daten/Statistiken/distances.csv',
                         index_col='distance [km]')
 
+# Welche Ladesäulen-Leistungen mit welcher Wahrscheinlichkeit
+POWERS = pd.read_csv('Daten/Statistiken/powers.csv',
+                     index_col='power [kW]')
+
 
 def scale_df(df, consumption_year):
     '''
@@ -137,12 +141,14 @@ def add_emobility(df, net, penetration):
         according_bus = net.bus.index[net.load.loc[choosen, 'bus']]
         choosen_bus.append(according_bus)
         # Profil neu berechnen erstmal
+        power = np.random.choice(np.array(POWERS.index),
+                                 p=POWERS['probability'].values)
         distance = np.random.choice(np.array(DISTANCES.index),
                                     p=DISTANCES['probability'].values)
         arrival=np.random.choice(np.array(list(range(24)))*4,
                                  p=ARRIVALS['arrival percent'].values)
-        profile = calc_load_profile_ecar(50, 11, distance, 20,
-                    arrival)
+        
+        profile = calc_load_profile_ecar(50, power, distance, 20, arrival)
         #Profil vom Ladevorgang überlagern
         df.loc[:, [choice]] += profile.iloc[:].values
     return choosen_bus
