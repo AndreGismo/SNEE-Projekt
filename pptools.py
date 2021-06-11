@@ -22,6 +22,8 @@ POWERS = pd.read_csv('Daten/Statistiken/powers.csv',
                      index_col='power [kW]')
 
 
+
+
 def scale_df(df, consumption_year):
     '''
     Skaliert das DataFrame df derart, dass über ein gesamtes Jahr der
@@ -95,7 +97,7 @@ def add_ecars(df, net, profile, every_nth):
     return df
 
 
-def add_emobility(df, net, penetration):
+def add_emobility(df, net, penetration, write_file=False):
     '''
     load_profile = pptools.add_emobility(load_profile, net, e_profile, penetration)
     
@@ -129,6 +131,10 @@ def add_emobility(df, net, penetration):
     df.columns = net.load.index
     loads = len(net.load.index)
     loads_to_add = int(np.round(penetration/100*loads, 0))
+    # zum Nachverfolgen, welcher Knoten welche Ladesäule mit welcher
+    # Ladeleistung etc. bekommt
+    scenario_data = pd.DataFrame(index=range(loads_to_add),
+            columns=['bus', 'p_load [kW]', 'arrival', 'travelled [km]'])
     loads_available = list(net.load.index)
     # zum Nachverfolgen, welche loads (also deren zugehöriger bus)
     # gewählt worden sind
@@ -143,15 +149,42 @@ def add_emobility(df, net, penetration):
         # Profil neu berechnen erstmal
         power = np.random.choice(np.array(POWERS.index),
                                  p=POWERS['probability'].values)
+        # Werte festhalten für Szenario
+        scenario_data.at[i, 'p_load [kW]'] = power
+        
         distance = np.random.choice(np.array(DISTANCES.index),
                                     p=DISTANCES['probability'].values)
+        # Werte festhalten für Szenario
+        scenario_data.at[i, 'travelled [km]'] = distance
+        
         arrival=np.random.choice(np.array(list(range(24)))*4,
                                  p=ARRIVALS['arrival percent'].values)
+        # Werte festhalten für Szenario
+        scenario_data.at[i, 'arrival'] = arrival
         
         profile = calc_load_profile_ecar(50, power, distance, 20, arrival)
         #Profil vom Ladevorgang überlagern
         df.loc[:, [choice]] += profile.iloc[:].values
-    return choosen_bus
+        
+    scenario_data.loc[:, 'bus'] = choosen_bus
+    
+    if write_file:
+        scenario_data.to_csv('Daten/Statistiken/scenario{}.csv'.format(penetration))
+    
+    return choosen_bus, scenario_data
+
+
+def add_emobility_like_scenario(df, net, scenario):
+    df.columns = net.load.index
+    for i in scenario.index:
+        eprofile = calc_load_profile_ecar(50, scenario.at[i, 'p_load [kW]'],
+                                          scenario.at[i, 'travelled [km]'], 20,
+                                          scenario.at[i, 'arrival'])
+        at_bus = scenario.at[i, 'bus']
+        df.loc[:, [at_bus]] = eprofile.iloc[:].values
+        
+    return list(scenario.loc[:, 'bus'])
+    
 
 
 def get_critical_bus(results_bus):
