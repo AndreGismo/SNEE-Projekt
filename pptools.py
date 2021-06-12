@@ -9,6 +9,7 @@ np.roll zum variieren der Zeit, wann der Ladevorgang beginnt
 import numpy as np
 import pandas as pd
 import battery as bat
+import pickle
 
 
 def scale_df(df, consumption_year):
@@ -35,9 +36,6 @@ def scale_df(df, consumption_year):
 def apply_scenario(df, net, scenario):
     data = df.copy()
     data.columns = net.load.index
-    #################################################################
-    #------------------HIER WEITER MACHEN!!-------------------------#
-    #################################################################
     for i in scenario.scenario_data.index:
         e_bat = scenario.scenario_data.at[i, 'battery size [kWh]']
         p_load = scenario.scenario_data.at[i, 'charging power [kW]']
@@ -339,6 +337,20 @@ def calc_load_profile_ecar(e_bat, p_const, dist_trav, consumption, arrival):
     profile = np.roll(profile, arrival)
     profile = pd.DataFrame(profile)
     return profile * 1000
+
+
+def save_scenario(scenario, filename):
+    path = 'Daten/Szenarien/' + filename + '.pkl'
+    with open(path, 'wb') as output:
+        pickle.dump(scenario, output)
+        
+        
+def load_scenario(filename):
+    path = 'Daten/Szenarien/' + filename + '.pkl'
+    with open(path, 'rb') as source:
+        scenario = pickle.load(source)
+    return scenario
+    
     
         
     

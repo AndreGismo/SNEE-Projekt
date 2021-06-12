@@ -32,7 +32,10 @@ from scenario import Scenario
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-scenario30 = Scenario(net, 30)
+scenario30 = Scenario(net, 50)
+ppt.save_scenario(scenario30, 'Szenario30')
+scenario30.set_constant('time of arrival', 68)
+loaded_scenario = ppt.load_scenario('Szenario30')
     
 #### Daten für die einzelnen loads erzeugen (96, 146) ########################
 # das sind die Daten vom 13.12.2020, weil es da den höchsten peak gab
@@ -43,7 +46,7 @@ data_nuernberg.drop('Unnamed: 0', axis=1, inplace=True)
 for i in range(len(net.load)-1):
     data_nuernberg[i+1] = data_nuernberg[data_nuernberg.columns[0]]
     
-scenario_data = ppt.apply_scenario(data_nuernberg, net, scenario30)
+scenario_data = ppt.apply_scenario(data_nuernberg, net, loaded_scenario)
 
 #choices, scenario_data = ppt.add_emobility(data_nuernberg, net, 30, True)
 #choices = ppt.add_emobility_like_scenario(data_nuernberg, net, scenario)
