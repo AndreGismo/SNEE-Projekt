@@ -10,6 +10,7 @@ gibt (penetration), usw....
 
 import pandas as pd
 import numpy as np
+import pickle
 
 
 class Scenario:
@@ -100,10 +101,27 @@ class Scenario:
                     self.scenario_data.loc[:, col] = pd.to_numeric(
                         self.scenario_data[col])
                     
-                    
-    def set_constant(self, parameter, value):
-        self.scenario_data.loc[:, parameter] = value
+    
+    @staticmethod
+    def set_constant(scenario, parameter, value):
+        result = scenario.copy()
+        result.loc[:, parameter] = value
+        return result
+        
+        
+    @staticmethod
+    def save_scenario(scenario, filename):
+        path = 'Daten/Szenarien/' + filename + '.pkl'
+        with open(path, 'wb') as output:
+            pickle.dump(scenario, output)
             
+            
+    @staticmethod
+    def load_scenario(filename):
+        path = 'Daten/Szenarien/' + filename + '.pkl'
+        with open(path, 'rb') as source:
+            scenario = pickle.load(source)
+        return scenario        
             
             
             

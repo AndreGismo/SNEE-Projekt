@@ -32,10 +32,10 @@ from scenario import Scenario
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-scenario30 = Scenario(net, 50)
-ppt.save_scenario(scenario30, 'Szenario30')
-scenario30.set_constant('time of arrival', 68)
-loaded_scenario = ppt.load_scenario('Szenario30')
+#scenario30 = Scenario(net, 50)
+#ppt.save_scenario(scenario30, 'Szenario30')
+#scenario30.set_constant('time of arrival', 68)
+loaded_scenario = Scenario.load_scenario('Szenario30')
     
 #### Daten für die einzelnen loads erzeugen (96, 146) ########################
 # das sind die Daten vom 13.12.2020, weil es da den höchsten peak gab
@@ -148,7 +148,7 @@ ax_bus_volt.set_ylabel('Spannung [V]')
 # trace, die alle buses enthält, die eine Ladesäule haben
 figure = pt.simple_plotly(net)
 
-charger_buses = scenario30.scenario_data['according bus nr.'].values
+charger_buses = loaded_scenario.scenario_data['according bus nr.'].values
 figure.add_trace(go.Scatter(x=net.bus_geodata.loc[charger_buses, 'x'],
                             y=net.bus_geodata.loc[charger_buses, 'y'],
                             mode='markers'))
