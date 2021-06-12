@@ -24,14 +24,15 @@ pio.renderers.default = 'browser'
 
 import pptools as ppt
 from battery import Battery
+from scenario import Scenario
 
 
-#### Szenario laden ##########################################################
-scenario = pd.read_csv('Daten/Statistiken/scenario30.csv')
-scenario.drop('Unnamed: 0', axis=1, inplace=True)
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
 net = pn.create_kerber_vorstadtnetz_kabel_1()
+
+#### Szenario erzeugen #######################################################
+scenario30 = Scenario(net, 30)
     
 #### Daten für die einzelnen loads erzeugen (96, 146) ########################
 # das sind die Daten vom 13.12.2020, weil es da den höchsten peak gab
@@ -41,16 +42,18 @@ data_nuernberg.drop('Unnamed: 0', axis=1, inplace=True)
     
 for i in range(len(net.load)-1):
     data_nuernberg[i+1] = data_nuernberg[data_nuernberg.columns[0]]
+    
+scenario_data = ppt.apply_scenario(data_nuernberg, net, scenario30)
 
 #choices, scenario_data = ppt.add_emobility(data_nuernberg, net, 30, True)
-choices = ppt.add_emobility_like_scenario(data_nuernberg, net, scenario)
-print('buses der gewählten Loads: ', choices)
+#choices = ppt.add_emobility_like_scenario(data_nuernberg, net, scenario)
+#print('buses der gewählten Loads: ', choices)
 #data_nuernberg.columns = net.load.index
-data_nuernberg /= 1e6
+#data_nuernberg /= 1e6
 
 
 #### data source erzeugen ####################################################
-loads = DFData(data_nuernberg)
+loads = DFData(scenario_data)
 
 # controler erzeugen, der die Werte der loads zu den jeweiligen Zeitpukten
 # entsprechend loads setzt
@@ -112,7 +115,7 @@ ax_line.set_ylabel('Auslastung [%]')
 
 samples = 10
 fig_load, ax_load = plt.subplots(1, 1, figsize=(15, 8))
-ax_load.plot(data_nuernberg[np.random.choice(data_nuernberg.columns, samples)]*1000,
+ax_load.plot(scenario_data[np.random.choice(scenario_data.columns, samples)]*1000,
              '-x')
 ax_load.set_title('Profile von {} zufällig ausgewählte Lasten'.format(samples))
 ax_load.grid()
@@ -142,8 +145,9 @@ ax_bus_volt.set_ylabel('Spannung [V]')
 # trace, die alle buses enthält, die eine Ladesäule haben
 figure = pt.simple_plotly(net)
 
-figure.add_trace(go.Scatter(x=net.bus_geodata.loc[choices, 'x'],
-                            y=net.bus_geodata.loc[choices, 'y'],
+charger_buses = scenario30.scenario_data['according bus nr.'].values
+figure.add_trace(go.Scatter(x=net.bus_geodata.loc[charger_buses, 'x'],
+                            y=net.bus_geodata.loc[charger_buses, 'y'],
                             mode='markers'))
 figure.show()
 

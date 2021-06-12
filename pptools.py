@@ -10,19 +10,6 @@ import numpy as np
 import pandas as pd
 import battery as bat
 
-# Wahrscheinlichkeit, wann das Auto zurückkommt für jede Stunde am Tag (0...23)
-ARRIVALS = pd.read_csv('Daten/Statistiken/arrivals.csv', index_col='hour')
-
-# Wahrscheinlichkeit, dass eine bestimmte Strecke am Tag zurückgelegt wird
-DISTANCES = pd.read_csv('Daten/Statistiken/distances.csv',
-                        index_col='distance [km]')
-
-# Welche Ladesäulen-Leistungen mit welcher Wahrscheinlichkeit
-POWERS = pd.read_csv('Daten/Statistiken/powers.csv',
-                     index_col='power [kW]')
-
-
-
 
 def scale_df(df, consumption_year):
     '''
@@ -45,56 +32,27 @@ def scale_df(df, consumption_year):
     return df / 1e9 * consumption_year
 
 
-def apply_scenario(df, net, P_load, load_start, load_duration, every_nth):
-    '''
-    Verändert das DataFrame "df" derart, dass jeder "every_nth"-te Haushalt
-    im Netz "net" ein E-Fahrzeug bekommt. Der Ladevorgang beginnt zur Uhrzeit
-    "load_start" und dauert "load_duration" Stunden und hat eine Leistung von
-    "P_load" MW.
-
-    Parameters
-    ----------
-    df : pandas DataFrame
-        Das DataFame, das die Lastprofile für die loads enthält.
-    net : pandapowerNet
-        Das Netz, in dem das Szenario betrachtet wird
-    P_load : float
-        Die Ladeleistung der E-Fahrzeuge in MW
-    load_start : int
-        Die Uhrzeit (hh), wann der Ladevorgang beginnt
-    load_duration : int
-        Die Dauer (in Stunden) des Ladevorgangs
-    every_nth : int
-        Die Angabe, jeder wievielte Haushalt ein E-Fahrzeug bekommt
-
-    Returns
-    -------
-    entsprechend der Vorgabe geändertes DataFrame (Leistungen in MW)
-
-    '''
-                              
-    load_start *= 4
-    load_duration *= 4
-    load_end = load_start+load_duration
-    
-    filt_rows = (df.index >= load_start) & (df.index <= load_end)
-    filt_cols = [i for i in range(1, len(df.columns)-1) if i % every_nth == 0]
-    df.loc[filt_rows, filt_cols] += P_load
+def apply_scenario(df, net, scenario):
+    data = df.copy()
+    data.columns = net.load.index
+    #################################################################
+    #------------------HIER WEITER MACHEN!!-------------------------#
+    #################################################################
+    for i in scenario.scenario_data.index:
+        e_bat = scenario.scenario_data.at[i, 'battery size [kWh]']
+        p_load = scenario.scenario_data.at[i, 'charging power [kW]']
+        dist_travelled = scenario.scenario_data.at[i, 'distance travelled [km]']
+        consumption = scenario.scenario_data.at[i, 'consumption [kWh/100km]']
+        arrival = scenario.scenario_data.at[i, 'time of arrival']
+        load = scenario.scenario_data.at[i, 'load nr.']
+        e_profile = calc_load_profile_ecar(e_bat, p_load, dist_travelled,
+                                           consumption, arrival)
         
-    # Spalten umbenennen, dass später der controler klarkommt
-    df.columns=net.load.index
-    
-    return df
-
-
-def add_ecars(df, net, profile, every_nth):
-    filt_cols = [i for i in range(1, len(df.columns)-1) if i % every_nth == 0]
-    df.loc[:, filt_cols] += profile
+        data.loc[:, load] += e_profile.iloc[:, 0].values
         
-    # Spalten umbenennen, dass später der controler klarkommt
-    df.columns=net.load.index
-    
-    return df
+    data /= 1e6
+    return data
+
 
 
 def add_emobility(df, net, penetration, write_file=False):

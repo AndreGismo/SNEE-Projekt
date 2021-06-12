@@ -26,8 +26,7 @@ class Scenario:
     
     __ARRIVALS = pd.read_csv('Daten/Statistiken/arrivals96.csv', sep=';')
     __ARRIVALS.drop('time', axis=1, inplace=True)
-    __ARRIVALS.index = pd.date_range(start='2020', freq='15min',
-                                     periods=len(__ARRIVALS))
+    __ARRIVALS.index = range(len(__ARRIVALS))
     
     __CONSUMPTIONS = {'consumption [kWh/100km]':[13, 15, 17, 19, 21, 23],
                       'probability':[0.3, 0.2, 0.15, 0.15, 0.1, 0.1]}
@@ -54,7 +53,7 @@ class Scenario:
         self.loads_available = list(net.load.index)
         
         self.scenario_data = pd.DataFrame(index=range(self.num_chargers),
-             columns=['bus nr.', 'charging power [kW]', 'time of arrival',
+             columns=['load nr.', 'according bus nr.', 'charging power [kW]', 'time of arrival',
                       'distance travelled [km]', 'consumption [kWh/100km]',
                       'battery size [kWh]'])
         
@@ -67,12 +66,14 @@ class Scenario:
         choosen_load = self.loads_available.pop(self.loads_available.index(choice))
         according_bus = self.net_buses.index[self.net_loads.at[choosen_load,
                                                                'bus']]
-        return according_bus
+        return choice, according_bus
         
         
     def get_scenario_data(self):
         for i in self.scenario_data.index:
-            self.scenario_data.at[i, 'bus nr.'] = self.get_corresponding_bus()
+            choosen_load, according_bus = self.get_corresponding_bus()
+            self.scenario_data.at[i, 'according bus nr.'] = according_bus
+            self.scenario_data.at[i, 'load nr.'] = choosen_load
             
             self.scenario_data.at[i, 'charging power [kW]'] = np.random.choice(
                 type(self).__LOAD_POWERS.index,

@@ -6,6 +6,7 @@ res_bus
 res_line
 res_trafo
 *.csv
+*.xlsx
 Test_Battery_ECar.py
 ecar.py
 kerber_timeseries.py
