@@ -141,29 +141,25 @@ class Scenario:
 
 
     def distribute_loads(self, near_trafo=True, lines=None, inplace=False):
-        print('hallo')
         if near_trafo:
             new_buses = []
             corresponding_loads = []
             cur_line = 1
             cur_bus = 1
             for _ in range(len(self.scenario_data.index)):
-                for i, busname in enumerate(self.net_buses['name']):
-                    # festlegen, welcher bus (also vom Namen her) als nächstes
-                    # gewählt werden soll
-                    wanted_name = 'loadbus_' + str(cur_line) + '_' + str(cur_bus)
-                    print(wanted_name)
-                    if busname == wanted_name:
-                        new_buses.append(i)
-                        print('new_buses:', new_buses)
-                        #corresponding_loads.append(int(
-                            #self.net_loads.loc[self.net_loads['bus'] == i].index))
-                        corresponding_loads.append(
-                            self.net_loads.index[self.net_loads['bus'] == i])
-                        print('entsprechende_loads:', corresponding_loads)
-                        
-                        # jetzt kann man die innere Schleife verlassen
-                        break
+                # festlegen, welcher bus (also vom Namen her) als nächstes
+                # gewählt werden soll
+                wanted_name = 'loadbus_' + str(cur_line) + '_' + str(cur_bus)
+                print(wanted_name)
+                # der Index des bus, auf den der Name passt
+                bus_index = self.net_buses.loc\
+                    [self.net_buses['name'] == wanted_name, 'name'].index.values[0]
+                new_buses.append(bus_index)
+                print('new_buses:', new_buses, 'Anzahl: ', len(new_buses))
+                # der index der load, welche dem oben gewählten bus entspricht
+                load_index = self.net_loads.index[self.net_loads['bus'] == bus_index].values[0]
+                corresponding_loads.append(load_index)
+                print('entsprechende_loads:', corresponding_loads)
                         
                 # dafür sorgen, dass im nächsten Durchlauf ein bus aus
                 # der nächsten line gewählt wird

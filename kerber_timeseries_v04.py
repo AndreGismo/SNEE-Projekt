@@ -35,9 +35,10 @@ net = pn.create_kerber_vorstadtnetz_kabel_1()
 #scenario30 = Scenario(net, 50)
 #ppt.save_scenario(scenario30, 'Szenario30')
 #scenario30.set_constant('time of arrival', 68)
-fun_scenario = Scenario.load_scenario('Szenario50')
-#fun_scenario = Scenario(net, 50)
+#fun_scenario = Scenario.load_scenario('Szenario50')
+fun_scenario = Scenario(net, 30)
 fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)
+fun_scenario.distribute_loads(inplace=True)
 #fun_scenario.set_constant('charging power [kW]', 22.2, inplace=True)
 
 
