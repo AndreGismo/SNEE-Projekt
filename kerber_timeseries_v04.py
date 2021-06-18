@@ -26,7 +26,7 @@ import pptools as ppt
 from battery import Battery
 from scenario import Scenario
 
-
+arrival_time = 45
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
 net = pn.create_kerber_vorstadtnetz_kabel_1()
@@ -35,7 +35,12 @@ net = pn.create_kerber_vorstadtnetz_kabel_1()
 #scenario30 = Scenario(net, 50)
 #ppt.save_scenario(scenario30, 'Szenario30')
 #scenario30.set_constant('time of arrival', 68)
-loaded_scenario = Scenario.load_scenario('Szenario30')
+fun_scenario = Scenario.load_scenario('Szenario50')
+#fun_scenario = Scenario(net, 50)
+fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)
+#fun_scenario.set_constant('charging power [kW]', 22.2, inplace=True)
+
+
     
 #### Daten für die einzelnen loads erzeugen (96, 146) ########################
 # das sind die Daten vom 13.12.2020, weil es da den höchsten peak gab
@@ -46,7 +51,7 @@ data_nuernberg.drop('Unnamed: 0', axis=1, inplace=True)
 for i in range(len(net.load)-1):
     data_nuernberg[i+1] = data_nuernberg[data_nuernberg.columns[0]]
     
-scenario_data = ppt.apply_scenario(data_nuernberg, net, loaded_scenario)
+scenario_data = ppt.apply_scenario(data_nuernberg, net, fun_scenario)
 
 #choices, scenario_data = ppt.add_emobility(data_nuernberg, net, 30, True)
 #choices = ppt.add_emobility_like_scenario(data_nuernberg, net, scenario)
@@ -85,7 +90,11 @@ results_line = pd.read_csv('res_line/loading_percent.csv', sep=';')
 
 results_bus.index = pd.date_range(start='2020', freq='15min',
                                   periods=len(results_bus))
+
 results_line.index = pd.date_range(start='2020', freq='15min',
+                                  periods=len(results_bus))
+
+results_trafo.index = pd.date_range(start='2020', freq='15min',
                                   periods=len(results_bus))
 
 
@@ -116,6 +125,12 @@ ax_line.set_xlabel('Zeitpunkt [MM-TT hh]')
 ax_line.set_ylabel('Auslastung [%]')
 
 
+fig_trafo, ax_trafo = plt.subplots(1, 1, figsize=(15, 8))
+ax_trafo.plot(results_trafo.iloc[:, 1])
+ax_trafo.set_xlabel('Zeitpunkt')
+ax_trafo.set_ylabel('Auslastung [%]')
+
+
 samples = 10
 fig_load, ax_load = plt.subplots(1, 1, figsize=(15, 8))
 ax_load.plot(scenario_data[np.random.choice(scenario_data.columns, samples)]*1000,
@@ -134,7 +149,7 @@ for i in range(1, 11):
                       
 fig_bus_volt, ax_bus_volt = plt.subplots(1, 1, figsize=(15,8))
 for i in range(1, 11):
-    volts = results_bus.loc['2020-01-01 18:00:00', buses_in_x[i-1]].values
+    volts = results_bus.loc['2020-01-01 11:15:00', buses_in_x[i-1]].values
     ax_bus_volt.plot(list(range(len(volts))), volts, '-x',
                      label=f'Verlauf der Spannung im Strang Nr. {i}')
     
@@ -148,10 +163,11 @@ ax_bus_volt.set_ylabel('Spannung [V]')
 # trace, die alle buses enthält, die eine Ladesäule haben
 figure = pt.simple_plotly(net)
 
-charger_buses = loaded_scenario.scenario_data['according bus nr.'].values
+charger_buses = fun_scenario.scenario_data['according bus nr.'].values
 figure.add_trace(go.Scatter(x=net.bus_geodata.loc[charger_buses, 'x'],
                             y=net.bus_geodata.loc[charger_buses, 'y'],
                             mode='markers'))
 figure.show()
 
 
+new_scenario = fun_scenario.distribute_loads()

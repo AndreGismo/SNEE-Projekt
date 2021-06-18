@@ -11,6 +11,7 @@ gibt (penetration), usw....
 import pandas as pd
 import numpy as np
 import pickle
+import copy
 
 
 class Scenario:
@@ -29,21 +30,28 @@ class Scenario:
     __ARRIVALS.drop('time', axis=1, inplace=True)
     __ARRIVALS.index = range(len(__ARRIVALS))
     
+    # Mittelwert nehmen?
     __CONSUMPTIONS = {'consumption [kWh/100km]':[13, 15, 17, 19, 21, 23],
                       'probability':[0.3, 0.2, 0.15, 0.15, 0.1, 0.1]}
     __CONSUMPTIONS = pd.DataFrame(__CONSUMPTIONS)
     __CONSUMPTIONS.set_index('consumption [kWh/100km]', inplace=True)
     
+    # Mittelwert nehmen?
     __BATTERY_SIZES = {'battery size [kWh]':[20, 30, 40, 50, 60, 70, 80],
                        'probability':[0.09, 0.12, 0.18, 0.20, 0.25, 0.08, 0.08]}
     __BATTERY_SIZES = pd.DataFrame(__BATTERY_SIZES)
     __BATTERY_SIZES.set_index('battery size [kWh]', inplace=True)
     
+    __SECOND_CAR = {'number of ecars':[1, 2],
+                    'probability':[0.8, 0.2]}
+    __SECOND_CAR = pd.DataFrame(__SECOND_CAR)
+    
     STATISTICS = {'distances':__DISTANCES,
                   'load powers':__LOAD_POWERS,
                   'arrivals':__ARRIVALS,
                   'consumptions':__CONSUMPTIONS,
-                  'battery sizes':__BATTERY_SIZES}
+                  'battery sizes':__BATTERY_SIZES,
+                  'number ecars':__SECOND_CAR}
     
     def __init__(self, net, penetration):
         self.net_buses = net.bus
@@ -56,7 +64,7 @@ class Scenario:
         self.scenario_data = pd.DataFrame(index=range(self.num_chargers),
              columns=['load nr.', 'according bus nr.', 'charging power [kW]', 'time of arrival',
                       'distance travelled [km]', 'consumption [kWh/100km]',
-                      'battery size [kWh]'])
+                      'battery size [kWh]', 'number of ecars'])
         
         #self.get_corresponding_buses()
         self.get_scenario_data()
@@ -96,17 +104,25 @@ class Scenario:
                 type(self).__BATTERY_SIZES.index,
                 p=type(self).__BATTERY_SIZES['probability'])
             
+            self.scenario_data.at[i, 'number of ecars'] = np.random.choice(
+                type(self).__SECOND_CAR['number of ecars'],
+                p=type(self).__SECOND_CAR['probability'])
+            
             for col in self.scenario_data.columns:
                 if not col == 'time of arrival':
                     self.scenario_data.loc[:, col] = pd.to_numeric(
                         self.scenario_data[col])
                     
     
-    @staticmethod
-    def set_constant(scenario, parameter, value):
-        result = scenario.copy()
-        result.loc[:, parameter] = value
-        return result
+    def set_constant(self, parameter, value, inplace=False):
+        if not inplace:
+            copied = copy.deepcopy(self)
+            copied.scenario_data.loc[:, parameter] = value
+            return copied
+        
+        else:
+            self.scenario_data.loc[:, parameter] = value
+        
         
         
     @staticmethod
@@ -121,7 +137,53 @@ class Scenario:
         path = 'Daten/Szenarien/' + filename + '.pkl'
         with open(path, 'rb') as source:
             scenario = pickle.load(source)
-        return scenario        
+        return scenario
+
+
+    def distribute_loads(self, near_trafo=True, lines=None, inplace=False):
+        print('hallo')
+        if near_trafo:
+            new_buses = []
+            corresponding_loads = []
+            cur_line = 1
+            cur_bus = 1
+            for _ in range(len(self.scenario_data.index)):
+                for i, busname in enumerate(self.net_buses['name']):
+                    # festlegen, welcher bus (also vom Namen her) als nächstes
+                    # gewählt werden soll
+                    wanted_name = 'loadbus_' + str(cur_line) + '_' + str(cur_bus)
+                    print(wanted_name)
+                    if busname == wanted_name:
+                        new_buses.append(i)
+                        print('new_buses:', new_buses)
+                        #corresponding_loads.append(int(
+                            #self.net_loads.loc[self.net_loads['bus'] == i].index))
+                        corresponding_loads.append(
+                            self.net_loads.index[self.net_loads['bus'] == i])
+                        print('entsprechende_loads:', corresponding_loads)
+                        
+                        # jetzt kann man die innere Schleife verlassen
+                        break
+                        
+                # dafür sorgen, dass im nächsten Durchlauf ein bus aus
+                # der nächsten line gewählt wird
+                cur_line +=1
+                # aufpassen, es gibt nur 10 lines im Kerber net
+                if cur_line > 10:
+                    cur_line = 1
+                    cur_bus += 1
+                
+        
+        if not inplace:
+            copied = copy.deepcopy(self)
+            copied.scenario_data.loc[:, 'according bus nr.'] = new_buses
+            copied.scenario_data.loc[:, 'load nr.'] = corresponding_loads
+            return copied
+        
+        else:
+            self.scenario_data.loc[:, 'according bus nr.'] = new_buses
+            self.scenario_data.loc[:, 'load nr.'] = corresponding_loads
+        
             
             
             
