@@ -171,30 +171,30 @@ class Scenario:
                 if cur_line > 10:
                     cur_line = 1
                     cur_bus += 1
-            # for _ in range(len(self.scenario_data.index)):
-            #     # festlegen, welcher bus (also vom Namen her) als nächstes
-            #     # gewählt werden soll
-            #     wanted_name = 'loadbus_' + str(cur_line) + '_' + str(cur_bus)
-            #     print(wanted_name)
-            #     # der Index des bus, auf den der Name passt
-            #     bus_index = self.net_buses.loc\
-            #         [self.net_buses['name'] == wanted_name, 'name'].index.values[0]
-            #     new_buses.append(bus_index)
-            #     print('new_buses:', new_buses, 'Anzahl: ', len(new_buses))
-            #     # der index der load, welche dem oben gewählten bus entspricht
-            #     load_index = self.net_loads.index[self.net_loads['bus'] == bus_index].values[0]
-            #     corresponding_loads.append(load_index)
-            #     print('entsprechende_loads:', corresponding_loads)
-                        
-            #     # dafür sorgen, dass im nächsten Durchlauf ein bus aus
-            #     # der nächsten line gewählt wird
-            #     cur_line +=1
-            #     # aufpassen, es gibt nur 10 lines im Kerber net
-            #     if cur_line > 10:
-            #         cur_line = 1
-            #         cur_bus += 1
             
-        print('anzahl bestimmter buses:', len(new_buses))
+        if not near_trafo:
+            new_buses = []
+            corresponding_loads = []
+            cur_line = 1
+            cur_bus = 39
+            buses_to_choose = self.num_chargers
+            for _ in range(39*10):
+                name = 'loadbus_'  + str(cur_line) + '_' + str(cur_bus)
+                for num, bus_name in enumerate(self.net_buses['name']):
+                    if bus_name == name:
+                        new_buses.append(num)
+                        cor_load = self.net_loads.loc\
+                            [self.net_loads['bus'] == num].index.values[0]
+                        corresponding_loads.append(cor_load)
+                        buses_to_choose -= 1
+                        
+                if buses_to_choose == 0:
+                    break
+                
+                cur_line += 1
+                if cur_line > 10:
+                    cur_line = 1
+                    cur_bus -= 1
                 
         
         if not inplace:
