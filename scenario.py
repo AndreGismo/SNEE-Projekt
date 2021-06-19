@@ -53,6 +53,13 @@ class Scenario:
                   'battery sizes':__BATTERY_SIZES,
                   'number ecars':__SECOND_CAR}
     
+    __LOADS_PER_LINE = {1:14, 2:14, 3:14, 4:19, 5:19, 6:10, 7:10, 8:10, 9:32,
+                        10:4}
+    
+    __NUM_LOADS = list(__LOADS_PER_LINE.values())
+    
+    __LINES = list(__LOADS_PER_LINE.keys())
+    
     def __init__(self, net, penetration):
         self.net_buses = net.bus
         self.net_loads = net.load
@@ -141,37 +148,53 @@ class Scenario:
 
 
     def distribute_loads(self, near_trafo=True, lines=None, inplace=False):
-        print('hallo')
         if near_trafo:
             new_buses = []
             corresponding_loads = []
             cur_line = 1
             cur_bus = 1
-            for _ in range(len(self.scenario_data.index)):
-                for i, busname in enumerate(self.net_buses['name']):
-                    # festlegen, welcher bus (also vom Namen her) als nächstes
-                    # gewählt werden soll
-                    wanted_name = 'loadbus_' + str(cur_line) + '_' + str(cur_bus)
-                    print(wanted_name)
-                    if busname == wanted_name:
-                        new_buses.append(i)
-                        print('new_buses:', new_buses)
-                        #corresponding_loads.append(int(
-                            #self.net_loads.loc[self.net_loads['bus'] == i].index))
-                        corresponding_loads.append(
-                            self.net_loads.index[self.net_loads['bus'] == i])
-                        print('entsprechende_loads:', corresponding_loads)
+            buses_to_choose = self.num_chargers
+            for _ in range(39*10):
+                name = 'loadbus_'  + str(cur_line) + '_' + str(cur_bus)
+                for num, bus_name in enumerate(self.net_buses['name']):
+                    if bus_name == name:
+                        new_buses.append(num)
+                        cor_load = self.net_loads.loc\
+                            [self.net_loads['bus'] == num].index.values[0]
+                        corresponding_loads.append(cor_load)
+                        buses_to_choose -= 1
                         
-                        # jetzt kann man die innere Schleife verlassen
-                        break
-                        
-                # dafür sorgen, dass im nächsten Durchlauf ein bus aus
-                # der nächsten line gewählt wird
-                cur_line +=1
-                # aufpassen, es gibt nur 10 lines im Kerber net
+                if buses_to_choose == 0:
+                    break
+                
+                cur_line += 1
                 if cur_line > 10:
                     cur_line = 1
                     cur_bus += 1
+            
+        if not near_trafo:
+            new_buses = []
+            corresponding_loads = []
+            cur_line = 1
+            cur_bus = 39
+            buses_to_choose = self.num_chargers
+            for _ in range(39*10):
+                name = 'loadbus_'  + str(cur_line) + '_' + str(cur_bus)
+                for num, bus_name in enumerate(self.net_buses['name']):
+                    if bus_name == name:
+                        new_buses.append(num)
+                        cor_load = self.net_loads.loc\
+                            [self.net_loads['bus'] == num].index.values[0]
+                        corresponding_loads.append(cor_load)
+                        buses_to_choose -= 1
+                        
+                if buses_to_choose == 0:
+                    break
+                
+                cur_line += 1
+                if cur_line > 10:
+                    cur_line = 1
+                    cur_bus -= 1
                 
         
         if not inplace:
