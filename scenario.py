@@ -52,13 +52,7 @@ class Scenario:
                   'consumptions':__CONSUMPTIONS,
                   'battery sizes':__BATTERY_SIZES,
                   'number ecars':__SECOND_CAR}
-    
-    __LOADS_PER_LINE = {1:14, 2:14, 3:14, 4:19, 5:19, 6:10, 7:10, 8:10, 9:32,
-                        10:4}
-    
-    __NUM_LOADS = list(__LOADS_PER_LINE.values())
-    
-    __LINES = list(__LOADS_PER_LINE.keys())
+
     
     def __init__(self, net, penetration):
         self.net_buses = net.bus
