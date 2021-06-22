@@ -16,7 +16,7 @@ import copy
 
 class Scenario:
     
-    __DISTANCES = {'distance travelled [km]':[20, 30, 40, 50, 60],
+    __DISTANCES = {'distance travelled [km]':[7, 21, 35, 50, 60],
                    'probability':[0.13, 0.29, 0.30, 0.15, 0.13]}
     __DISTANCES = pd.DataFrame(__DISTANCES)
     __DISTANCES.set_index('distance travelled [km]', inplace=True)
@@ -31,14 +31,14 @@ class Scenario:
     __ARRIVALS.index = range(len(__ARRIVALS))
     
     # Mittelwert nehmen?
-    __CONSUMPTIONS = {'consumption [kWh/100km]':[13, 15, 17, 19, 21, 23],
-                      'probability':[0.3, 0.2, 0.15, 0.15, 0.1, 0.1]}
+    __CONSUMPTIONS = {'consumption [kWh/100km]':[17.7],#[13, 15, 17, 19, 21, 23],
+                      'probability':[1]}#[0.3, 0.2, 0.15, 0.15, 0.1, 0.1]}
     __CONSUMPTIONS = pd.DataFrame(__CONSUMPTIONS)
     __CONSUMPTIONS.set_index('consumption [kWh/100km]', inplace=True)
     
     # Mittelwert nehmen?
-    __BATTERY_SIZES = {'battery size [kWh]':[20, 30, 40, 50, 60, 70, 80],
-                       'probability':[0.09, 0.12, 0.18, 0.20, 0.25, 0.08, 0.08]}
+    __BATTERY_SIZES = {'battery size [kWh]':[52],#[20, 30, 40, 50, 60, 70, 80],
+                       'probability':[1]}#[0.09, 0.12, 0.18, 0.20, 0.25, 0.08, 0.08]}
     __BATTERY_SIZES = pd.DataFrame(__BATTERY_SIZES)
     __BATTERY_SIZES.set_index('battery size [kWh]', inplace=True)
     
