@@ -33,6 +33,19 @@ def scale_df(df, consumption_year):
     return df / 1e9 * consumption_year
 
 
+def prepare_baseload(df, net):
+    data = df.copy()
+    if 'Unnamed: 0' in data.columns:
+        data.drop('Unnamed: 0', axis=1, inplace=True)
+        
+    for i in range(1, len(net.load)):
+        data[i] = data[data.columns[0]]
+        
+    data.columns = net.load.index
+        
+    return data
+
+
 def apply_scenario(df, net, scenario):
     data = df.copy()
     data.columns = net.load.index

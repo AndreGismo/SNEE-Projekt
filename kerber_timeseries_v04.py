@@ -27,18 +27,21 @@ from battery import Battery
 from scenario import Scenario
 
 arrival_time = 45
+pkw = 11.1
+
+cosphi = 0.4
+
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-#scenario30 = Scenario(net, 50)
-#ppt.save_scenario(scenario30, 'Szenario30')
-#scenario30.set_constant('time of arrival', 68)
 fun_scenario = Scenario.load_scenario('Szenario50')
-#fun_scenario = Scenario(net, 40)
+#fun_scenario = Scenario(net, 80)
+#Scenario.save_scenario(fun_scenario, 'scenario80')
 fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)
-fun_scenario.distribute_loads(inplace=True, near_trafo=True)
+fun_scenario.set_constant('charging power [kW]', pkw, inplace=True)
+#fun_scenario.distribute_loads(inplace=True, near_trafo=True)
 #fun_scenario.set_constant('charging power [kW]', 22.2, inplace=True)
 
 
@@ -46,29 +49,29 @@ fun_scenario.distribute_loads(inplace=True, near_trafo=True)
 #### Daten für die einzelnen loads erzeugen (96, 146) ########################
 # das sind die Daten vom 13.12.2020, weil es da den höchsten peak gab
 data_nuernberg = pd.read_csv('Daten/Lastprofil/Nuernberg_absolut_final.csv')
-# die nervige Spalte weg
-data_nuernberg.drop('Unnamed: 0', axis=1, inplace=True)
-    
-for i in range(len(net.load)-1):
-    data_nuernberg[i+1] = data_nuernberg[data_nuernberg.columns[0]]
-    
-scenario_data = ppt.apply_scenario(data_nuernberg, net, fun_scenario)
 
-#choices, scenario_data = ppt.add_emobility(data_nuernberg, net, 30, True)
-#choices = ppt.add_emobility_like_scenario(data_nuernberg, net, scenario)
-#print('buses der gewählten Loads: ', choices)
-#data_nuernberg.columns = net.load.index
-#data_nuernberg /= 1e6
-
+baseload = ppt.prepare_baseload(data_nuernberg, net)
+    
+scenario_data = ppt.apply_scenario(baseload, net, fun_scenario)
 
 #### data source erzeugen ####################################################
 loads = DFData(scenario_data)
+
+# Faktor für Anteil Q an P aus cosphi errechnen
+faktor = (1/cosphi**2 -1)**0.5
+
+loads_q = DFData(baseload * 1e-6 * faktor)
 
 # controler erzeugen, der die Werte der loads zu den jeweiligen Zeitpukten
 # entsprechend loads setzt
 load_controler = control.ConstControl(net, element='load', variable='p_mw',
                                       element_index=net.load.index,
                                       data_source=loads,
+                                      profile_name=net.load.index)
+
+load_controler_q = control.ConstControl(net, element='load', variable='q_mvar',
+                                      element_index=net.load.index,
+                                      data_source=loads_q,
                                       profile_name=net.load.index)
 
 # output writer erzeugen, der die Ergebnisse für jeden Timestep in eine
@@ -162,11 +165,11 @@ ax_bus_volt.set_ylabel('Spannung [V]')
 
 #### Das Netwerk graphisch darstellen ########################################
 # trace, die alle buses enthält, die eine Ladesäule haben
-figure = pt.simple_plotly(net)
+# figure = pt.simple_plotly(net)
 
-charger_buses = fun_scenario.scenario_data['according bus nr.'].values
-figure.add_trace(go.Scatter(x=net.bus_geodata.loc[charger_buses, 'x'],
-                            y=net.bus_geodata.loc[charger_buses, 'y'],
-                            mode='markers'))
-figure.show()
+# charger_buses = fun_scenario.scenario_data['according bus nr.'].values
+# figure.add_trace(go.Scatter(x=net.bus_geodata.loc[charger_buses, 'x'],
+#                             y=net.bus_geodata.loc[charger_buses, 'y'],
+#                             mode='markers'))
+# figure.show()
 
