@@ -48,6 +48,8 @@ def prepare_baseload(df, net):
 
 def apply_scenario(df, net, scenario):
     data = df.copy()
+    # DataFrame, welches nur die Daten Ladekurve der e-Fahrzeuge speichert
+    data_ecar = pd.DataFrame()
     data.columns = net.load.index
     for i in scenario.scenario_data.index:
         e_bat = scenario.scenario_data.at[i, 'battery size [kWh]']
@@ -60,9 +62,12 @@ def apply_scenario(df, net, scenario):
                                            consumption, arrival)
         
         data.loc[:, load] += e_profile.iloc[:, 0].values
+        data_ecar[i] = e_profile.iloc[:, 0].values
         
+    data_ecar.columns = scenario.scenario_data['load nr.']
     data /= 1e6
-    return data
+    data_ecar /= 1e6
+    return data, data_ecar
 
 
 

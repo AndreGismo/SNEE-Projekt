@@ -25,26 +25,39 @@ pio.renderers.default = 'browser'
 import pptools as ppt
 from battery import Battery
 from scenario import Scenario
+from battery_controller import BatteryController
 
+# Variablen zum Steuern der simulierten Szenarien
+same_arrival = True
 arrival_time = 45
-pkw = 11.1
 
-cosphi = 0.4
+same_power = True
+loading_power = 11.1
+
+same_travelled = True
+distance_travelled = 50
+
+cosphi = 0.9
 
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-fun_scenario = Scenario.load_scenario('Szenario50')
-#fun_scenario = Scenario(net, 80)
-#Scenario.save_scenario(fun_scenario, 'scenario80')
-fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)
-fun_scenario.set_constant('charging power [kW]', pkw, inplace=True)
+fun_scenario = Scenario.load_scenario('Szenario30')
+
+if same_arrival:
+    fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)
+    
+if same_power:
+    fun_scenario.set_constant('charging power [kW]', loading_power,
+                              inplace=True)
+    
+if same_travelled:
+    fun_scenario.set_constant('distance travelled [km]', distance_travelled,
+                              inplace=True)
+    
 #fun_scenario.distribute_loads(inplace=True, near_trafo=True)
-#fun_scenario.set_constant('charging power [kW]', 22.2, inplace=True)
-
-
     
 #### Daten für die einzelnen loads erzeugen (96, 146) ########################
 # das sind die Daten vom 13.12.2020, weil es da den höchsten peak gab
@@ -52,7 +65,7 @@ data_nuernberg = pd.read_csv('Daten/Lastprofil/Nuernberg_absolut_final.csv')
 
 baseload = ppt.prepare_baseload(data_nuernberg, net)
     
-scenario_data = ppt.apply_scenario(baseload, net, fun_scenario)
+scenario_data, loading_data = ppt.apply_scenario(baseload, net, fun_scenario)
 
 #### data source erzeugen ####################################################
 loads = DFData(scenario_data)
@@ -60,6 +73,7 @@ loads = DFData(scenario_data)
 # Faktor für Anteil Q an P aus cosphi errechnen
 faktor = (1/cosphi**2 -1)**0.5
 
+# hier noch durch 10^6, weil baseload noch nicht skaliert
 loads_q = DFData(baseload * 1e-6 * faktor)
 
 # controler erzeugen, der die Werte der loads zu den jeweiligen Zeitpukten
@@ -173,3 +187,5 @@ ax_bus_volt.set_ylabel('Spannung [V]')
 #                             mode='markers'))
 # figure.show()
 
+bat_conroler = BatteryController(net, baseload=baseload, element_index=scenario_data.index,
+                                 data_source=loads, element='load', variable='p_mw')
