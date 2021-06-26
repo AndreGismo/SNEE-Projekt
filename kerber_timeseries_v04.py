@@ -28,8 +28,8 @@ from scenario import Scenario
 from battery_controller import BatteryController
 
 # Variablen zum Steuern der simulierten Szenarien
-same_arrival = True
-arrival_time = 45
+same_arrival = False
+arrival_time = 46
 
 same_power = True
 loading_power = 11.1
@@ -44,7 +44,7 @@ cosphi = 0.9
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-fun_scenario = Scenario.load_scenario('Szenario30')
+fun_scenario = Scenario.load_scenario('Szenario100')
 
 if same_arrival:
     fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)
@@ -68,13 +68,16 @@ baseload = ppt.prepare_baseload(data_nuernberg, net)
 scenario_data, loading_data = ppt.apply_scenario(baseload, net, fun_scenario)
 
 #### data source erzeugen ####################################################
-loads = DFData(scenario_data)
+loads = DFData(baseload)
 
 # Faktor für Anteil Q an P aus cosphi errechnen
 faktor = (1/cosphi**2 -1)**0.5
 
-# hier noch durch 10^6, weil baseload noch nicht skaliert
-loads_q = DFData(baseload * 1e-6 * faktor)
+# data_source für Q
+loads_q = DFData(baseload * faktor)
+
+# data_source für Ladekurven der e-Autos
+loads_bat = DFData(loading_data)
 
 # controler erzeugen, der die Werte der loads zu den jeweiligen Zeitpukten
 # entsprechend loads setzt
@@ -87,6 +90,10 @@ load_controler_q = control.ConstControl(net, element='load', variable='q_mvar',
                                       element_index=net.load.index,
                                       data_source=loads_q,
                                       profile_name=net.load.index)
+
+load_controller_bat = BatteryController(net, element='load', variable='p_mw',
+                                        element_index=loading_data.columns,
+                                        data_source=loads_bat)
 
 # output writer erzeugen, der die Ergebnisse für jeden Timestep in eine
 # csv-Datei je load schreibt
@@ -187,5 +194,3 @@ ax_bus_volt.set_ylabel('Spannung [V]')
 #                             mode='markers'))
 # figure.show()
 
-bat_conroler = BatteryController(net, baseload=baseload, element_index=scenario_data.index,
-                                 data_source=loads, element='load', variable='p_mw')

@@ -42,7 +42,7 @@ def prepare_baseload(df, net):
         data[i] = data[data.columns[0]]
         
     data.columns = net.load.index
-        
+    data /= 1e6
     return data
 
 
@@ -64,7 +64,10 @@ def apply_scenario(df, net, scenario):
         data.loc[:, load] += e_profile.iloc[:, 0].values
         data_ecar[i] = e_profile.iloc[:, 0].values
         
-    data_ecar.columns = scenario.scenario_data['load nr.']
+    # damit die columns von data_ecar (welches ja später zur data-source wird)
+    # int sind 
+    new_columns = scenario.scenario_data['load nr.'].astype(int)
+    data_ecar.columns = new_columns  
     data /= 1e6
     data_ecar /= 1e6
     return data, data_ecar
