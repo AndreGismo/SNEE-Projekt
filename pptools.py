@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import battery as bat
 import pickle
+from controllable_battery import ControllableBattery
 
 
 def scale_df(df, consumption_year):
@@ -44,6 +45,25 @@ def prepare_baseload(df, net):
     data.columns = net.load.index
     data /= 1e6
     return data
+
+
+def prepare_batteries(net, scenario):
+    batteries = []
+    for i in scenario.scenario_data.index:
+        e_bat = scenario.scenario_data.at[i, 'battery size [kWh]']
+        p_load = scenario.scenario_data.at[i, 'charging power [kW]']
+        dist_travelled = scenario.scenario_data.at[i, 'distance travelled [km]']
+        consumption = scenario.scenario_data.at[i, 'consumption [kWh/100km]']
+        arrival = scenario.scenario_data.at[i, 'time of arrival']
+        at_load = scenario.scenario_data.at[i, 'load nr.']
+        at_bus = scenario.scenario_data.at[i, 'according bus nr.']
+        
+        # eine entsprechende ControllableBattery erzeugen
+        bat = ControllableBattery(net, at_load, at_bus, e_bat,
+                                  p_load, dist_travelled, consumption, arrival)
+        batteries.append(bat)
+        
+    return batteries # müssen an BatteryControler übergeben werden
 
 
 def apply_scenario(df, net, scenario):
