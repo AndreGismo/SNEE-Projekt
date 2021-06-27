@@ -67,6 +67,8 @@ baseload = ppt.prepare_baseload(data_nuernberg, net)
     
 scenario_data, loading_data = ppt.apply_scenario(baseload, net, fun_scenario)
 
+batteries = ppt.prepare_batteries(net, fun_scenario)
+
 #### data source erzeugen ####################################################
 loads = DFData(baseload)
 
@@ -93,7 +95,10 @@ load_controler_q = control.ConstControl(net, element='load', variable='q_mvar',
 
 load_controller_bat = BatteryController(net, element='load', variable='p_mw',
                                         element_index=loading_data.columns,
-                                        data_source=loads_bat)
+                                        data_source=loads_bat, batteries=batteries)
+
+for bat in batteries:
+    bat.register_controller(load_controller_bat)
 
 # output writer erzeugen, der die Ergebnisse für jeden Timestep in eine
 # csv-Datei je load schreibt
