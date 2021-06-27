@@ -35,7 +35,7 @@ same_power = True
 loading_power = 11.1
 
 same_travelled = True
-distance_travelled = 50
+distance_travelled = 100
 
 cosphi = 0.9
 
@@ -186,11 +186,17 @@ ax_bus_volt.set_ylabel('Spannung [V]')
 
 #### Das Netwerk graphisch darstellen ########################################
 # trace, die alle buses enthält, die eine Ladesäule haben
-# figure = pt.simple_plotly(net)
+figure = pt.simple_plotly(net)
 
-# charger_buses = fun_scenario.scenario_data['according bus nr.'].values
-# figure.add_trace(go.Scatter(x=net.bus_geodata.loc[charger_buses, 'x'],
-#                             y=net.bus_geodata.loc[charger_buses, 'y'],
-#                             mode='markers'))
-# figure.show()
+charger_buses = fun_scenario.scenario_data['according bus nr.'].values
+figure.add_trace(go.Scatter(x=net.bus_geodata.loc[charger_buses, 'x'],
+                            y=net.bus_geodata.loc[charger_buses, 'y'],
+                            mode='markers'))
+figure.show()
+
+violations = load_controller_bat.get_voltage_violations()
+violated_buses = load_controller_bat.get_violated_buses()
+print('Anzahl der Spannungsband-Verletzungen: {}'.format(violations))
+print('\nUnd die betroffenen buses: \n {}'.format(violated_buses))
+
 
