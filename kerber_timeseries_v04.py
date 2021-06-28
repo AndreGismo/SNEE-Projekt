@@ -44,7 +44,7 @@ cosphi = 0.9
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-fun_scenario = Scenario.load_scenario('Szenario100')
+fun_scenario = Scenario.load_scenario('Szenario30')
 
 if same_arrival:
     fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)
@@ -67,7 +67,7 @@ baseload = ppt.prepare_baseload(data_nuernberg, net)
     
 scenario_data, loading_data = ppt.apply_scenario(baseload, net, fun_scenario)
 
-batteries = ppt.prepare_batteries(net, fun_scenario)
+batteries, datasource_bat = ppt.prepare_batteries(net, fun_scenario)
 
 #### data source erzeugen ####################################################
 loads = DFData(baseload)
@@ -79,7 +79,7 @@ faktor = (1/cosphi**2 -1)**0.5
 loads_q = DFData(baseload * faktor)
 
 # data_source für Ladekurven der e-Autos
-loads_bat = DFData(loading_data)
+loads_bat = DFData(datasource_bat)
 
 # controler erzeugen, der die Werte der loads zu den jeweiligen Zeitpukten
 # entsprechend loads setzt
@@ -94,11 +94,11 @@ load_controler_q = control.ConstControl(net, element='load', variable='q_mvar',
                                       profile_name=net.load.index)
 
 load_controller_bat = BatteryController(net, element='load', variable='p_mw',
-                                        element_index=loading_data.columns,
+                                        element_index=datasource_bat.columns,#loading_data.columns,
                                         data_source=loads_bat, batteries=batteries)
 
 for bat in batteries:
-    bat.register_controller(load_controller_bat)
+    bat.register_datasource(loads_bat)
 
 # output writer erzeugen, der die Ergebnisse für jeden Timestep in eine
 # csv-Datei je load schreibt

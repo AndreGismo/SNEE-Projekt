@@ -28,7 +28,10 @@ class BatteryController(control.controller.const_control.ConstControl):
     voltage_violations = 0
     violated_buses = set()
     
-    
+    #TODO
+    # dafür sorgen, dass der Controller ein leeres datasource bekommt, dass
+    # dann in jedem Timestep die nächste Zeile von den einzelen batteries
+    # aufgefüllt bekommt
     def __init__(self, net, element, variable, element_index, batteries, data_source=None,
                  in_service=True, recycle=False, order=0, level=0, **kwargs):
         super().__init__(net, in_service=in_service, recycle=recycle, data_source=data_source,
@@ -42,11 +45,14 @@ class BatteryController(control.controller.const_control.ConstControl):
         
     
     def time_step(self, net, time):
+        # schauen, ob es Verletzungen vom Spannungsband gab
         self.check_violations(net, time)
+        # falls nicht, die batteries ganz normal die datasource beschreiben lassen
         if not self.need_action:
             for bat in self.batteries:
                 bat._write_to_controller_ds(time)
-                
+        
+        # falls doch
         else:
             for bat in self.batteries:
                 if bat.according_bus in type(self).violated_buses:
@@ -72,7 +78,10 @@ class BatteryController(control.controller.const_control.ConstControl):
                 self.need_action = True
         #print('\nhallo, ich wurde ausgeführt :)')
         
-        
+    
+    #TODO
+    # das sollte wohl eher in der ControllableBattery geschehen
+    # das zurücksetzen vom Alarm muss dann noch hier irgendwo geschehen
     def react(self, time):
         for bat in self.batteries:
             if bat.according_bus in type(self).violated_buses:
