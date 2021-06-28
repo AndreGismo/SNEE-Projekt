@@ -41,7 +41,7 @@ class BatteryController(control.controller.const_control.ConstControl):
         self.profile_name = self.element_index
         self.need_action = False
         self.batteries = batteries
-        #self.register_for_batteries()
+        self.register_for_batteries()
         
     
     def time_step(self, net, time):
@@ -58,6 +58,8 @@ class BatteryController(control.controller.const_control.ConstControl):
                 if bat.according_bus in type(self).violated_buses:
                     #TODO
                     # entsprechend reagieren => Leistung der bat runter
+                    #self.need_action = False
+                    #type(self).violated_buses = set()
                     pass
         
         # die normale time_step ausführen
@@ -90,6 +92,7 @@ class BatteryController(control.controller.const_control.ConstControl):
             # erstmal wieder Alarm zurück, da ja reagiert worden ist
             self.need_action = False
             type(self).violated_buses = set()
+    
         
     def get_voltage_violations(self):
         return type(self).voltage_violations
@@ -101,7 +104,7 @@ class BatteryController(control.controller.const_control.ConstControl):
     
     def register_for_batteries(self):
         for bat in self.batteries:
-            bat.register_controller(self)
+            bat.register_datasource(self.data_source)
         
         
         

@@ -31,8 +31,8 @@ from battery_controller import BatteryController
 same_arrival = False
 arrival_time = 46
 
-same_power = True
-loading_power = 11.1
+same_power = False
+loading_power = 3.7
 
 same_travelled = True
 distance_travelled = 100
@@ -65,7 +65,7 @@ data_nuernberg = pd.read_csv('Daten/Lastprofil/Nuernberg_absolut_final.csv')
 
 baseload = ppt.prepare_baseload(data_nuernberg, net)
     
-scenario_data, loading_data = ppt.apply_scenario(baseload, net, fun_scenario)
+#scenario_data, loading_data = ppt.apply_scenario(baseload, net, fun_scenario)
 
 batteries, datasource_bat = ppt.prepare_batteries(net, fun_scenario)
 
@@ -97,8 +97,8 @@ load_controller_bat = BatteryController(net, element='load', variable='p_mw',
                                         element_index=datasource_bat.columns,#loading_data.columns,
                                         data_source=loads_bat, batteries=batteries)
 
-for bat in batteries:
-    bat.register_datasource(loads_bat)
+#for bat in batteries:
+    #bat.register_datasource(loads_bat)
 
 # output writer erzeugen, der die Ergebnisse für jeden Timestep in eine
 # csv-Datei je load schreibt

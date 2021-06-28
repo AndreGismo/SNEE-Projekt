@@ -31,8 +31,12 @@ class ControllableBattery:
         self.power = power
         self.current_energy = self.energy - consumption*distance_travelled/100
         self.current_power = 0
-        self.current_soc = self.current_energy/self.energy
+        self.current_soc = self.current_energy/self.energy*100
         self.arrival_time = arrival
+        self.u_ls = u_ls
+        self.u_n = u_n
+        self.i_ls = i_ls
+        self.s = s
         self.data_source = None
         
     # Überflüssig   
@@ -48,8 +52,9 @@ class ControllableBattery:
         if timestep < self.arrival_time:
             pass
         else:
-            self.current_soc = self.current_energy + self.data_source.df.at\
+            self.current_energy += self.data_source.df.at\
                 [timestep-1, self.at_load]/4*1000
+            self.current_soc = self.current_energy/self.energy*100
         
     
     def calc_power(self, timestep):
@@ -59,23 +64,34 @@ class ControllableBattery:
         else:
             if self.current_soc < 80:
                 self.current_power = self.power
-                
-            else:
+            
+            #TODO
+            # irgendwo hier muss der Fehler liegen, dass die Ladeleistung in
+            # diesem Bereich ansteigt (eigentlich müsste die ja sinken!!)
+            elif self.current_soc >= 80 and self.current_soc < 100:
                 p_ls = self.u_ls/self.u_n * self.i_ls * self.energy
                 k_l = (100-self.s)/(np.log(self.power/p_ls))
-                self.current_power = self.power*np.exp((self.s-self.current_soc)/k_l)
-                pass
+                self.current_power = self.power*np.exp(-(self.s-self.current_soc)/k_l)
+                
+            else:
+                self.current_power = 0
     
     
     def _write_to_controller_ds(self, timestep):
         self.calc_soc(timestep)
         self.calc_power(timestep)
+        self.print_interest(timestep)
         self.data_source.df.at[timestep, self.at_load] = self.current_power/1000
     
     
-    def slow_down(self, du):
+    def adapt_power(self, du):
         pass
         #TODO
         # der controller muss sagen, um wieviel das Spannungsband verletzt
         # worden ist, dann entsprechend diejenige Leistung, welche normal jetzt
         # anliegen würde, um einen bestimmten Wert dP(dU) absenken
+        
+    def print_interest(self, timestep):
+        if self.at_load == 17:
+            print(f'\nLadestand zum timestep {timestep}: {self.current_soc}')
+            print(f'Ladeleistung zum timestep {timestep}: {self.current_power}\n')
