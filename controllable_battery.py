@@ -27,7 +27,7 @@ class ControllableBattery:
                  i_ls=0.3, s=80):
         self.at_load = at_load
         self.according_bus = according_bus
-        self.energy = energy
+        self.energy = energy 
         self.power = power
         self.current_energy = self.energy - consumption*distance_travelled/100
         self.current_power = 0

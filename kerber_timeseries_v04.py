@@ -31,8 +31,8 @@ from battery_controller import BatteryController
 same_arrival = False
 arrival_time = 46
 
-same_power = False
-loading_power = 3.7
+same_power = True
+loading_power = 11.1
 
 same_travelled = True
 distance_travelled = 100
@@ -161,14 +161,14 @@ ax_trafo.set_xlabel('Zeitpunkt')
 ax_trafo.set_ylabel('Auslastung [%]')
 
 
-samples = 10
-fig_load, ax_load = plt.subplots(1, 1, figsize=(15, 8))
-ax_load.plot(scenario_data[np.random.choice(scenario_data.columns, samples)]*1000,
-             '-x')
-ax_load.set_title('Profile von {} zufällig ausgewählte Lasten'.format(samples))
-ax_load.grid()
-ax_load.set_xlabel('Zeitpunkt [MM-TT hh]')
-ax_load.set_ylabel('Leistung [kW]')
+# samples = 10
+# fig_load, ax_load = plt.subplots(1, 1, figsize=(15, 8))
+# ax_load.plot(scenario_data[np.random.choice(scenario_data.columns, samples)]*1000,
+#              '-x')
+# ax_load.set_title('Profile von {} zufällig ausgewählte Lasten'.format(samples))
+# ax_load.grid()
+# ax_load.set_xlabel('Zeitpunkt [MM-TT hh]')
+# ax_load.set_ylabel('Leistung [kW]')
 
 
 # Zeichnen, wie die Spannung über den einzelnen Strängen von Knoten zu
@@ -179,7 +179,7 @@ for i in range(1, 11):
                       
 fig_bus_volt, ax_bus_volt = plt.subplots(1, 1, figsize=(15,8))
 for i in range(1, 11):
-    volts = results_bus.loc['2020-01-01 11:15:00', buses_in_x[i-1]].values
+    volts = results_bus.loc['2020-01-01 19:30:00', buses_in_x[i-1]].values
     ax_bus_volt.plot(list(range(len(volts))), volts, '-x',
                      label=f'Verlauf der Spannung im Strang Nr. {i}')
     
