@@ -205,3 +205,6 @@ print('Anzahl der Spannungsband-Verletzungen: {}'.format(violations))
 print('\nUnd die betroffenen buses: \n {}'.format(violated_buses))
 
 
+bats = 0
+for i in load_controller_bat.net_status['battery available']:
+    bats += i

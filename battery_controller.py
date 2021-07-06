@@ -22,16 +22,10 @@ from pandapower import timeseries as ts
 
 
 class BatteryController(control.controller.const_control.ConstControl):
-    """
-        Example class of a Battery-Controller. Models an abstract energy storage.
-    """
+
     voltage_violations = 0
     violated_buses = set()
     
-    #TODO
-    # dafür sorgen, dass der Controller ein leeres datasource bekommt, dass
-    # dann in jedem Timestep die nächste Zeile von den einzelen batteries
-    # aufgefüllt bekommt
     def __init__(self, net, element, variable, element_index, batteries, data_source=None,
                  in_service=True, recycle=False, order=0, level=0, **kwargs):
         super().__init__(net, in_service=in_service, recycle=recycle, data_source=data_source,
@@ -41,7 +35,19 @@ class BatteryController(control.controller.const_control.ConstControl):
         self.profile_name = self.element_index
         self.need_action = False
         self.batteries = batteries
+        self.net_status = pd.DataFrame(index=net.load.index,
+                                       columns=['corresponding bus nr.',
+                                                'battery available',
+                                                'delta voltage'])
+        self.prepare_net_status(net)
         self.register_for_batteries()
+        
+        
+    def prepare_net_status(self, net):
+        self.net_status.loc[:, 'corresponding bus nr.'] = net.load.bus
+        self.net_status.loc[:, 'battery available'] = 0
+        for bat in self.batteries:
+            self.net_status.at[bat.at_load, 'battery available'] = 1
         
     
     def time_step(self, net, time):
