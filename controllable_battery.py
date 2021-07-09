@@ -21,8 +21,8 @@ class ControllableBattery:
     def __init__(self, net, at_load, according_bus, energy, power,
                  distance_travelled, consumption, arrival, u_ls=4.2, u_n=3.6,
                  i_ls=0.3, s=80):
-        self.at_load = at_load
-        self.according_bus = according_bus
+        self.at_load = int(at_load)
+        self.according_bus = int(according_bus)
         self.energy = energy 
         self.power = power
         self.current_energy = self.energy - consumption*distance_travelled/100
@@ -79,21 +79,38 @@ class ControllableBattery:
                 self.current_power = 0
     
     
-    def _write_to_controller_ds(self, timestep):
+    def _write_to_controller_ds(self, timestep, delta_u):
+        #print(f'Batterie Nr. {self.at_load} sieht Spannungsdifferenz {delta_u} [%]')
         self.calc_soc(timestep)
         self.calc_power(timestep)
+        self.reduce_power(timestep, delta_u)
         #self.print_interest(timestep)
         type(self).data_source.df.at[timestep, self.at_load] = self.current_power/1000
     
     
-    def adapt_power(self, du):
-        pass
-        #TODO
-        # der controller muss sagen, um wieviel das Spannungsband verletzt
-        # worden ist, dann entsprechend diejenige Leistung, welche normal jetzt
-        # anliegen würde, um einen bestimmten Wert dP(dU) absenken
+    def reduce_power(self, timestep, delta_u):
+        # reduziert die Ladeleistung in Abhängigkeit der
+        # Spannungsunterschreitung
+            
+        if delta_u < 0.03:
+            factor = 1
+            
+        elif delta_u >= 0.03 and delta_u < 0.06:
+            factor = -10/3 * delta_u + 2
+            
+        elif delta_u >= 0.06:
+            factor = 0
+            
+        #print('\nerrechneter Faktor für Batterie Nr. {} zum Zeitpunkt {}: {} aufgrund delta_u {}'.format(self.at_load, timestep, factor, delta_u))
+        self.current_power *= factor
+            
         
     def print_interest(self, timestep):
         if self.at_load == 17:
             print(f'\nLadestand zum timestep {timestep}: {self.current_soc}')
             print(f'Ladeleistung zum timestep {timestep}: {self.current_power}\n')
+            
+            
+    def print_violated(self, timestep):
+        print('Batterie am Knoten {} (Last Nr {}) reagiert zu Zeitschritt {}.\
+              '.format(self.according_bus, self.at_load, timestep))

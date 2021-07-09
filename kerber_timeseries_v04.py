@@ -4,6 +4,10 @@ Created on Tue May 18 09:45:33 2021
 
 @author: andre
 Kerber-Netz simulieren über time series
+kann es sein, dass bei den drei controllern irgendwelche überschneidungen beim
+Eintragen der einzelnen Werte aus ihrem jeweilgen datasource in die loads vom net
+gibt? nicht jeder Knoten hat im net[res_bus] eine Leistung anliegen (???)
+=>vielleicht am level etwas ändern vom BatteryController?
 """
 import numpy as np
 import pandas as pd
@@ -35,7 +39,7 @@ same_power = True
 loading_power = 11.1
 
 same_travelled = True
-distance_travelled = 100
+distance_travelled = 200
 
 cosphi = 0.9
 
@@ -44,7 +48,7 @@ cosphi = 0.9
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-fun_scenario = Scenario.load_scenario('Szenario30')
+fun_scenario = Scenario.load_scenario('Szenario100')
 
 if same_arrival:
     fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)

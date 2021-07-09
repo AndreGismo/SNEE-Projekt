@@ -22,6 +22,18 @@ from pandapower import timeseries as ts
 
 
 class BatteryController(control.controller.const_control.ConstControl):
+    
+    # self.need_action erstmal weggelassen. Für jede Batterie (also an dem
+    # zugehörigen Knoten) wird zu jedem timestep geprüft, wie weit die Spannung
+    # gefallen ist. Diese Differenz wird beim Aufruf von bat.write_to_controller_ds
+    # übergeben, damit die jeweilige Batterie entsprechend ihre Leistung reduzieren
+    # kann. PROBLEM: den Zustand vom Netz kennt man nur nach der Netzberechung
+    # im aktuellen timestep (wofür man wiederum alle Lasten benötigt - welche
+    # man ja wiederum in Abhängigkeit des Netzzustandes berechnen möchte)
+    # => den Zustand vom Netz im letzten timestep nehmen
+    # order und level jeweils 0
+    # check violations erst nach super.timestep(net)? weil erst dann die Ergebnisse
+    # im net stehen
 
     voltage_violations = 0
     violated_buses = set()
@@ -46,30 +58,34 @@ class BatteryController(control.controller.const_control.ConstControl):
     def prepare_net_status(self, net):
         self.net_status.loc[:, 'corresponding bus nr.'] = net.load.bus
         self.net_status.loc[:, 'battery available'] = 0
+        self.net_status.loc[:, 'delta voltage'] = 0
         for bat in self.batteries:
             self.net_status.at[bat.at_load, 'battery available'] = 1
         
     
     def time_step(self, net, time):
         # schauen, ob es Verletzungen vom Spannungsband gab
-        self.check_violations(net, time)
+        #self.check_violations(net, time)
         # falls nicht, die batteries ganz normal die datasource beschreiben lassen
-        if not self.need_action:
-            for bat in self.batteries:
-                bat._write_to_controller_ds(time)
+        #if not self.need_action:
+        for bat in self.batteries:
+            delta_u = self.net_status.at[bat.at_load, 'delta voltage']
+            bat._write_to_controller_ds(time, delta_u)
         
         # falls doch
-        else:
-            for bat in self.batteries:
-                if bat.according_bus in type(self).violated_buses:
+        #else:
+            #for bat in self.batteries:
+                #if bat.according_bus in type(self).violated_buses:
+                    #bat.print_violated(time)
                     #TODO
                     # entsprechend reagieren => Leistung der bat runter
                     #self.need_action = False
                     #type(self).violated_buses = set()
-                    pass
+                    #pass
         
         # die normale time_step ausführen
         super().time_step(net, time)
+        self.check_violations(net, time)
     
     
     def write_with_loc(self, net):
@@ -82,8 +98,16 @@ class BatteryController(control.controller.const_control.ConstControl):
                 type(self).voltage_violations += 1
                 type(self).violated_buses.add(num)
             
-            if type(self).voltage_violations >= 1:
-                self.need_action = True
+            #print('Spannung: ', voltage)
+            delta_u = 1 - voltage
+            #print('\ndelta u: ', delta_u)
+            self.net_status.at[num, 'delta voltage'] = delta_u
+            if num == 45:
+                print('\ndelta u: ', delta_u)
+                print('\ndelta u: ', self.net_status.at[num, 'delta voltage'], 'zum Zeitpunkt ', time)
+            
+            #if type(self).voltage_violations >= 1:
+                #self.need_action = True
         #print('\nhallo, ich wurde ausgeführt :)')
         
     
