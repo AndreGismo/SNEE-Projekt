@@ -33,6 +33,7 @@ class ControllableBattery:
         self.u_n = u_n
         self.i_ls = i_ls
         self.s = s
+        self.activate_controlling = False
         
         
     def register_datasource(self, datasource):
@@ -83,7 +84,8 @@ class ControllableBattery:
         #print(f'Batterie Nr. {self.at_load} sieht Spannungsdifferenz {delta_u} [%]')
         self.calc_soc(timestep)
         self.calc_power(timestep)
-        self.reduce_power(timestep, delta_u)
+        if self.activate_controlling:
+            self.reduce_power(timestep, delta_u)
         #self.print_interest(timestep)
         type(self).data_source.df.at[timestep, self.at_load] = self.current_power/1000
     
@@ -92,14 +94,20 @@ class ControllableBattery:
         # reduziert die Ladeleistung in Abhängigkeit der
         # Spannungsunterschreitung
             
-        if delta_u < 0.03:
+        if delta_u < 0.005:
             factor = 1
             
-        elif delta_u >= 0.03 and delta_u < 0.06:
-            factor = -10/3 * delta_u + 2
+        elif delta_u >= 0.005 and delta_u < 0.01: # schwächste Steigung
+            factor = -2.5 * delta_u + 1.1
             
-        elif delta_u >= 0.06:
-            factor = 0
+        elif delta_u >= 0.01 and delta_u < 0.03: # schwache Steigung
+            factor = -5 * delta_u + 1.1
+            
+        elif delta_u >= 0.03 and delta_u < 0.06: # normale Steigung
+            factor = -0.5/0.05 * delta_u + 1.1
+            
+        elif delta_u >= 0.06: #
+            factor = 0.5
             
         #print('\nerrechneter Faktor für Batterie Nr. {} zum Zeitpunkt {}: {} aufgrund delta_u {}'.format(self.at_load, timestep, factor, delta_u))
         self.current_power *= factor

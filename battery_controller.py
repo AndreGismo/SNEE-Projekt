@@ -53,8 +53,15 @@ class BatteryController(control.controller.const_control.ConstControl):
                                                 'delta voltage'])
         self.prepare_net_status(net)
         self.register_for_batteries()
+        self.activate_controlling = False
         
-        
+    
+    def activate_contolling(self):
+        self.activate_controlling = True
+        for bat in self.batteries:
+            bat.activate_controlling = True
+    
+    
     def prepare_net_status(self, net):
         self.net_status.loc[:, 'corresponding bus nr.'] = net.load.bus
         self.net_status.loc[:, 'battery available'] = 0
@@ -102,13 +109,9 @@ class BatteryController(control.controller.const_control.ConstControl):
             delta_u = 1 - voltage
             #print('\ndelta u: ', delta_u)
             self.net_status.at[num, 'delta voltage'] = delta_u
-            if num == 45:
-                print('\ndelta u: ', delta_u)
-                print('\ndelta u: ', self.net_status.at[num, 'delta voltage'], 'zum Zeitpunkt ', time)
-            
             #if type(self).voltage_violations >= 1:
                 #self.need_action = True
-        #print('\nhallo, ich wurde ausgeführt :)')
+                #print('\nhallo, ich wurde ausgeführt :)')
         
     
     #TODO

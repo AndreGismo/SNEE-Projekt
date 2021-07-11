@@ -32,7 +32,7 @@ from scenario import Scenario
 from battery_controller import BatteryController
 
 # Variablen zum Steuern der simulierten Szenarien
-same_arrival = False
+same_arrival = True
 arrival_time = 46
 
 same_power = True
@@ -41,6 +41,8 @@ loading_power = 11.1
 same_travelled = True
 distance_travelled = 200
 
+controlling = True
+
 cosphi = 0.9
 
 #### Netz bauen ##############################################################
@@ -48,7 +50,7 @@ cosphi = 0.9
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-fun_scenario = Scenario.load_scenario('Szenario100')
+fun_scenario = Scenario.load_scenario('Szenario50')
 
 if same_arrival:
     fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)
@@ -101,8 +103,9 @@ load_controller_bat = BatteryController(net, element='load', variable='p_mw',
                                         element_index=datasource_bat.columns,#loading_data.columns,
                                         data_source=loads_bat, batteries=batteries)
 
-#for bat in batteries:
-    #bat.register_datasource(loads_bat)
+if controlling:
+    load_controller_bat.activate_contolling()
+
 
 # output writer erzeugen, der die Ergebnisse für jeden Timestep in eine
 # csv-Datei je load schreibt
@@ -195,13 +198,13 @@ ax_bus_volt.set_ylabel('Spannung [V]')
 
 #### Das Netwerk graphisch darstellen ########################################
 # trace, die alle buses enthält, die eine Ladesäule haben
-figure = pt.simple_plotly(net)
+# figure = pt.simple_plotly(net)
 
-charger_buses = fun_scenario.scenario_data['according bus nr.'].values
-figure.add_trace(go.Scatter(x=net.bus_geodata.loc[charger_buses, 'x'],
-                            y=net.bus_geodata.loc[charger_buses, 'y'],
-                            mode='markers'))
-figure.show()
+# charger_buses = fun_scenario.scenario_data['according bus nr.'].values
+# figure.add_trace(go.Scatter(x=net.bus_geodata.loc[charger_buses, 'x'],
+#                             y=net.bus_geodata.loc[charger_buses, 'y'],
+#                             mode='markers'))
+# figure.show()
 
 violations = load_controller_bat.get_voltage_violations()
 violated_buses = load_controller_bat.get_violated_buses()
