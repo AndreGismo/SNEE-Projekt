@@ -86,33 +86,36 @@ class ControllableBattery:
         self.calc_soc(timestep)
         self.calc_power(timestep)
         if self.activate_controlling:
-            # i-Anteil der Regelung vorbereiten
+            # i- und d-Anteile der Regelung vorbereiten
             delta_sum = self.sum_deltas(delta_u)
-            self.reduce_power(timestep, delta_u, delta_sum)
+            delta_dif = self.dif_deltas(delta_u)
+            self.reduce_power(timestep, delta_u, delta_sum, delta_dif)
         #self.print_interest(timestep)
         type(self).data_source.df.at[timestep, self.at_load] = self.current_power/1000
     
     
-    def reduce_power(self, timestep, delta_u, delta_sum):
+    def reduce_power(self, timestep, delta_u, delta_sum, delta_dif):
         # reduziert die Ladeleistung in Abhängigkeit der
-        # Spannungsunterschreitung
+        # Spannungsunterschreitung -> p-Anteil
             
         if delta_u < 0.01:
             factor = 1
             
         elif delta_u >= 0.01 and delta_u < 0.06: # schwächste Steigung
-            factor = -0.6/0.05 * delta_u + 1.12
+            factor = -0.4/0.05 * delta_u + 1.08
             
         elif delta_u >= 0.06: #
-            factor = 0.4
+            factor = 0.6
             
-        factor -= delta_sum*2
+        factor -= delta_sum*0.5
+        factor -= delta_dif*0
         #print('\nerrechneter Faktor für Batterie Nr. {} zum Zeitpunkt {}: {} aufgrund delta_u {}'.format(self.at_load, timestep, factor, delta_u))
         self.current_power *= factor
         
         
     def sum_deltas(self, delta_u):
-        if len(self.last_dus) < 10:
+        # i-Anteil
+        if len(self.last_dus) < 15:
             self.last_dus.append(delta_u)
             
         else:
@@ -122,10 +125,19 @@ class ControllableBattery:
         delta_sum = 0
         for i in self.last_dus:
             delta_sum += i
-            
-        if self.at_load == 37:
-            print(delta_sum)
+
         return delta_sum
+    
+    
+    def dif_deltas(self, delta_u):
+        # d-Anteil
+        if len(self.last_dus) < 2:
+            delta_dif = delta_u
+            
+        else:
+            delta_dif = delta_u - self.last_dus[-2]
+            
+        return delta_dif
             
         
     def print_interest(self, timestep):

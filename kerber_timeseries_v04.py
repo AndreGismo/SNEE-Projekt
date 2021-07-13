@@ -32,7 +32,7 @@ from scenario import Scenario
 from battery_controller import BatteryController
 
 # Variablen zum Steuern der simulierten Szenarien
-same_arrival = True
+same_arrival = False
 arrival_time = 46
 
 same_power = True
@@ -50,7 +50,7 @@ cosphi = 0.9
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-fun_scenario = Scenario.load_scenario('Szenario100')
+fun_scenario = Scenario.load_scenario('Szenario80')
 
 if same_arrival:
     fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)

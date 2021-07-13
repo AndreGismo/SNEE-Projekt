@@ -66,7 +66,7 @@ def prepare_batteries(net, scenario):
         batteries.append(bat)
         
     columns = scenario.scenario_data['load nr.'].astype(int)
-    print('Länge der übergebenen columns', len(columns))
+    #print('Länge der übergebenen columns', len(columns))
     datasource = pd.DataFrame(index=list(range(96)), columns=columns)
         
     return batteries, datasource # müssen an BatteryControler übergeben werden
