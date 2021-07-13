@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import battery as bat
 import pickle
+from controllable_battery import ControllableBattery
 
 
 def scale_df(df, consumption_year):
@@ -42,12 +43,39 @@ def prepare_baseload(df, net):
         data[i] = data[data.columns[0]]
         
     data.columns = net.load.index
-        
+    data /= 1e6
     return data
+
+#TODO
+# so erweitern, dass auch direkt ein fertiges df, dass später zur datasource
+# der Batteries und vom BatteryController wird, heraus kommt
+def prepare_batteries(net, scenario):
+    batteries = []
+    for i in scenario.scenario_data.index:
+        e_bat = scenario.scenario_data.at[i, 'battery size [kWh]']
+        p_load = scenario.scenario_data.at[i, 'charging power [kW]']
+        dist_travelled = scenario.scenario_data.at[i, 'distance travelled [km]']
+        consumption = scenario.scenario_data.at[i, 'consumption [kWh/100km]']
+        arrival = scenario.scenario_data.at[i, 'time of arrival']
+        at_load = scenario.scenario_data.at[i, 'load nr.']
+        at_bus = scenario.scenario_data.at[i, 'according bus nr.']
+        
+        # eine entsprechende ControllableBattery erzeugen
+        bat = ControllableBattery(net, at_load, at_bus, e_bat,
+                                  p_load, dist_travelled, consumption, arrival)
+        batteries.append(bat)
+        
+    columns = scenario.scenario_data['load nr.'].astype(int)
+    #print('Länge der übergebenen columns', len(columns))
+    datasource = pd.DataFrame(index=list(range(96)), columns=columns)
+        
+    return batteries, datasource # müssen an BatteryControler übergeben werden
 
 
 def apply_scenario(df, net, scenario):
     data = df.copy()
+    # DataFrame, welches nur die Daten Ladekurve der e-Fahrzeuge speichert
+    data_ecar = pd.DataFrame()
     data.columns = net.load.index
     for i in scenario.scenario_data.index:
         e_bat = scenario.scenario_data.at[i, 'battery size [kWh]']
@@ -60,87 +88,15 @@ def apply_scenario(df, net, scenario):
                                            consumption, arrival)
         
         data.loc[:, load] += e_profile.iloc[:, 0].values
+        data_ecar[i] = e_profile.iloc[:, 0].values
         
+    # damit die columns von data_ecar (welches ja später zur data-source wird)
+    # int sind 
+    new_columns = scenario.scenario_data['load nr.'].astype(int)
+    data_ecar.columns = new_columns  
     data /= 1e6
-    return data
-
-
-
-def add_emobility(df, net, penetration, write_file=False):
-    '''
-    load_profile = pptools.add_emobility(load_profile, net, e_profile, penetration)
-    
-    Überlagert 'penetration' Prozent der Lasten des Netzes 'net' in
-    'load_profile' mit dem Lastprofil 'e_profile'
-
-    Parameters
-    ----------
-    df : pandas DataFrame
-        Das DataFrame, welches alle Lastprofile aller loads im Netz enthält
-    net : pandapowerNet
-        Das Netz, welches die Lasten enthält
-    e_profile : pandas DataFrame
-        Das Lastprofil der Ladesäulen
-    penetration : int
-        Durchdringung [%] der Ladesäulen
-
-    Raises
-    ------
-    ValueError
-        Wenn für 'penetration' eine Zahl größer als 100 übergeben wird
-
-    Returns
-    -------
-    df : pandas DataFrame
-        Das entsprechend der Vorgabe erweiterte DataFrame
-
-    '''
-    if penetration > 100:
-        raise ValueError("'penetration' darf maximal gleich 100 sein.")
-    df.columns = net.load.index
-    loads = len(net.load.index)
-    loads_to_add = int(np.round(penetration/100*loads, 0))
-    # zum Nachverfolgen, welcher Knoten welche Ladesäule mit welcher
-    # Ladeleistung etc. bekommt
-    scenario_data = pd.DataFrame(index=range(loads_to_add),
-            columns=['bus', 'p_load [kW]', 'arrival', 'travelled [km]'])
-    loads_available = list(net.load.index)
-    # zum Nachverfolgen, welche loads (also deren zugehöriger bus)
-    # gewählt worden sind
-    choosen_bus = []
-    for i in range(loads_to_add):
-        choice = np.random.choice(loads_available)
-        # sicherstellen, dass nicht mehrmals dieselbe load gewählt wird
-        choosen = loads_available.pop(loads_available.index(choice))
-        # den der gewählten load entsprechenden bus bestimmen
-        according_bus = net.bus.index[net.load.loc[choosen, 'bus']]
-        choosen_bus.append(according_bus)
-        # Profil neu berechnen erstmal
-        power = np.random.choice(np.array(POWERS.index),
-                                 p=POWERS['probability'].values)
-        # Werte festhalten für Szenario
-        scenario_data.at[i, 'p_load [kW]'] = power
-        
-        distance = np.random.choice(np.array(DISTANCES.index),
-                                    p=DISTANCES['probability'].values)
-        # Werte festhalten für Szenario
-        scenario_data.at[i, 'travelled [km]'] = distance
-        
-        arrival=np.random.choice(np.array(list(range(24)))*4,
-                                 p=ARRIVALS['arrival percent'].values)
-        # Werte festhalten für Szenario
-        scenario_data.at[i, 'arrival'] = arrival
-        
-        profile = calc_load_profile_ecar(50, power, distance, 20, arrival)
-        #Profil vom Ladevorgang überlagern
-        df.loc[:, [choice]] += profile.iloc[:].values
-        
-    scenario_data.loc[:, 'bus'] = choosen_bus
-    
-    if write_file:
-        scenario_data.to_csv('Daten/Statistiken/scenario{}.csv'.format(penetration))
-    
-    return choosen_bus, scenario_data
+    data_ecar /= 1e6
+    return data, data_ecar
 
 
 def add_emobility_like_scenario(df, net, scenario):

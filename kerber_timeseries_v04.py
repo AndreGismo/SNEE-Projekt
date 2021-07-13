@@ -4,6 +4,10 @@ Created on Tue May 18 09:45:33 2021
 
 @author: andre
 Kerber-Netz simulieren über time series
+kann es sein, dass bei den drei controllern irgendwelche überschneidungen beim
+Eintragen der einzelnen Werte aus ihrem jeweilgen datasource in die loads vom net
+gibt? nicht jeder Knoten hat im net[res_bus] eine Leistung anliegen (???)
+=>vielleicht am level etwas ändern vom BatteryController?
 """
 import numpy as np
 import pandas as pd
@@ -25,26 +29,41 @@ pio.renderers.default = 'browser'
 import pptools as ppt
 from battery import Battery
 from scenario import Scenario
+from battery_controller import BatteryController
 
-arrival_time = 45
-pkw = 11.1
+# Variablen zum Steuern der simulierten Szenarien
+same_arrival = False
+arrival_time = 46
 
-cosphi = 0.4
+same_power = True
+loading_power = 11.1
+
+same_travelled = True
+distance_travelled = 200
+
+controlling = True
+
+cosphi = 0.9
 
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-fun_scenario = Scenario.load_scenario('Szenario50')
-#fun_scenario = Scenario(net, 80)
-#Scenario.save_scenario(fun_scenario, 'scenario80')
-fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)
-fun_scenario.set_constant('charging power [kW]', pkw, inplace=True)
+fun_scenario = Scenario.load_scenario('Szenario80')
+
+if same_arrival:
+    fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)
+    
+if same_power:
+    fun_scenario.set_constant('charging power [kW]', loading_power,
+                              inplace=True)
+    
+if same_travelled:
+    fun_scenario.set_constant('distance travelled [km]', distance_travelled,
+                              inplace=True)
+    
 #fun_scenario.distribute_loads(inplace=True, near_trafo=True)
-#fun_scenario.set_constant('charging power [kW]', 22.2, inplace=True)
-
-
     
 #### Daten für die einzelnen loads erzeugen (96, 146) ########################
 # das sind die Daten vom 13.12.2020, weil es da den höchsten peak gab
@@ -52,15 +71,21 @@ data_nuernberg = pd.read_csv('Daten/Lastprofil/Nuernberg_absolut_final.csv')
 
 baseload = ppt.prepare_baseload(data_nuernberg, net)
     
-scenario_data = ppt.apply_scenario(baseload, net, fun_scenario)
+#scenario_data, loading_data = ppt.apply_scenario(baseload, net, fun_scenario)
+
+batteries, datasource_bat = ppt.prepare_batteries(net, fun_scenario)
 
 #### data source erzeugen ####################################################
-loads = DFData(scenario_data)
+loads = DFData(baseload)
 
 # Faktor für Anteil Q an P aus cosphi errechnen
 faktor = (1/cosphi**2 -1)**0.5
 
-loads_q = DFData(baseload * 1e-6 * faktor)
+# data_source für Q
+loads_q = DFData(baseload * faktor)
+
+# data_source für Ladekurven der e-Autos
+loads_bat = DFData(datasource_bat)
 
 # controler erzeugen, der die Werte der loads zu den jeweiligen Zeitpukten
 # entsprechend loads setzt
@@ -73,6 +98,14 @@ load_controler_q = control.ConstControl(net, element='load', variable='q_mvar',
                                       element_index=net.load.index,
                                       data_source=loads_q,
                                       profile_name=net.load.index)
+
+load_controller_bat = BatteryController(net, element='load', variable='p_mw',
+                                        element_index=datasource_bat.columns,#loading_data.columns,
+                                        data_source=loads_bat, batteries=batteries)
+
+if controlling:
+    load_controller_bat.activate_contolling()
+
 
 # output writer erzeugen, der die Ergebnisse für jeden Timestep in eine
 # csv-Datei je load schreibt
@@ -135,14 +168,14 @@ ax_trafo.set_xlabel('Zeitpunkt')
 ax_trafo.set_ylabel('Auslastung [%]')
 
 
-samples = 10
-fig_load, ax_load = plt.subplots(1, 1, figsize=(15, 8))
-ax_load.plot(scenario_data[np.random.choice(scenario_data.columns, samples)]*1000,
-             '-x')
-ax_load.set_title('Profile von {} zufällig ausgewählte Lasten'.format(samples))
-ax_load.grid()
-ax_load.set_xlabel('Zeitpunkt [MM-TT hh]')
-ax_load.set_ylabel('Leistung [kW]')
+# samples = 10
+# fig_load, ax_load = plt.subplots(1, 1, figsize=(15, 8))
+# ax_load.plot(scenario_data[np.random.choice(scenario_data.columns, samples)]*1000,
+#              '-x')
+# ax_load.set_title('Profile von {} zufällig ausgewählte Lasten'.format(samples))
+# ax_load.grid()
+# ax_load.set_xlabel('Zeitpunkt [MM-TT hh]')
+# ax_load.set_ylabel('Leistung [kW]')
 
 
 # Zeichnen, wie die Spannung über den einzelnen Strängen von Knoten zu
@@ -153,7 +186,7 @@ for i in range(1, 11):
                       
 fig_bus_volt, ax_bus_volt = plt.subplots(1, 1, figsize=(15,8))
 for i in range(1, 11):
-    volts = results_bus.loc['2020-01-01 11:15:00', buses_in_x[i-1]].values
+    volts = results_bus.loc['2020-01-01 19:30:00', buses_in_x[i-1]].values
     ax_bus_volt.plot(list(range(len(volts))), volts, '-x',
                      label=f'Verlauf der Spannung im Strang Nr. {i}')
     
@@ -173,3 +206,12 @@ ax_bus_volt.set_ylabel('Spannung [V]')
 #                             mode='markers'))
 # figure.show()
 
+violations = load_controller_bat.get_voltage_violations()
+violated_buses = load_controller_bat.get_violated_buses()
+print('Anzahl der Spannungsband-Verletzungen: {}'.format(violations))
+print('\nUnd die betroffenen buses: \n {}'.format(violated_buses))
+
+
+bats = 0
+for i in load_controller_bat.net_status['battery available']:
+    bats += i

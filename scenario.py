@@ -113,6 +113,8 @@ class Scenario:
                 if not col == 'time of arrival':
                     self.scenario_data.loc[:, col] = pd.to_numeric(
                         self.scenario_data[col])
+            
+            #self.scenario_data['load nr.'] = self.scenario_data['load nr.'].astype(int)
                     
     
     def set_constant(self, parameter, value, inplace=False):
