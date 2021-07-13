@@ -50,7 +50,7 @@ cosphi = 0.9
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-fun_scenario = Scenario.load_scenario('Szenario50')
+fun_scenario = Scenario.load_scenario('Szenario100')
 
 if same_arrival:
     fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)

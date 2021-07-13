@@ -34,6 +34,7 @@ class ControllableBattery:
         self.i_ls = i_ls
         self.s = s
         self.activate_controlling = False
+        self.last_dus = []
         
         
     def register_datasource(self, datasource):
@@ -85,32 +86,46 @@ class ControllableBattery:
         self.calc_soc(timestep)
         self.calc_power(timestep)
         if self.activate_controlling:
-            self.reduce_power(timestep, delta_u)
+            # i-Anteil der Regelung vorbereiten
+            delta_sum = self.sum_deltas(delta_u)
+            self.reduce_power(timestep, delta_u, delta_sum)
         #self.print_interest(timestep)
         type(self).data_source.df.at[timestep, self.at_load] = self.current_power/1000
     
     
-    def reduce_power(self, timestep, delta_u):
+    def reduce_power(self, timestep, delta_u, delta_sum):
         # reduziert die Ladeleistung in Abhängigkeit der
         # Spannungsunterschreitung
             
-        if delta_u < 0.005:
+        if delta_u < 0.01:
             factor = 1
             
-        elif delta_u >= 0.005 and delta_u < 0.01: # schwächste Steigung
-            factor = -2.5 * delta_u + 1.1
-            
-        elif delta_u >= 0.01 and delta_u < 0.03: # schwache Steigung
-            factor = -5 * delta_u + 1.1
-            
-        elif delta_u >= 0.03 and delta_u < 0.06: # normale Steigung
-            factor = -0.5/0.05 * delta_u + 1.1
+        elif delta_u >= 0.01 and delta_u < 0.06: # schwächste Steigung
+            factor = -0.6/0.05 * delta_u + 1.12
             
         elif delta_u >= 0.06: #
-            factor = 0.5
+            factor = 0.4
             
+        factor -= delta_sum*2
         #print('\nerrechneter Faktor für Batterie Nr. {} zum Zeitpunkt {}: {} aufgrund delta_u {}'.format(self.at_load, timestep, factor, delta_u))
         self.current_power *= factor
+        
+        
+    def sum_deltas(self, delta_u):
+        if len(self.last_dus) < 10:
+            self.last_dus.append(delta_u)
+            
+        else:
+            self.last_dus.pop(0)
+            self.last_dus.append(delta_u)
+            
+        delta_sum = 0
+        for i in self.last_dus:
+            delta_sum += i
+            
+        if self.at_load == 37:
+            print(delta_sum)
+        return delta_sum
             
         
     def print_interest(self, timestep):
