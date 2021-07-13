@@ -46,9 +46,7 @@ def prepare_baseload(df, net):
     data /= 1e6
     return data
 
-#TODO
-# so erweitern, dass auch direkt ein fertiges df, dass später zur datasource
-# der Batteries und vom BatteryController wird, heraus kommt
+
 def prepare_batteries(net, scenario):
     batteries = []
     for i in scenario.scenario_data.index:
@@ -66,7 +64,6 @@ def prepare_batteries(net, scenario):
         batteries.append(bat)
         
     columns = scenario.scenario_data['load nr.'].astype(int)
-    #print('Länge der übergebenen columns', len(columns))
     datasource = pd.DataFrame(index=list(range(96)), columns=columns)
         
     return batteries, datasource # müssen an BatteryControler übergeben werden

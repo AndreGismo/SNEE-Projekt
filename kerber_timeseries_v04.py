@@ -32,7 +32,7 @@ from scenario import Scenario
 from battery_controller import BatteryController
 
 # Variablen zum Steuern der simulierten Szenarien
-same_arrival = False
+same_arrival = True
 arrival_time = 46
 
 same_power = True
