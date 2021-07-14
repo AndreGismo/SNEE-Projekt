@@ -8,6 +8,9 @@ kann es sein, dass bei den drei controllern irgendwelche überschneidungen beim
 Eintragen der einzelnen Werte aus ihrem jeweilgen datasource in die loads vom net
 gibt? nicht jeder Knoten hat im net[res_bus] eine Leistung anliegen (???)
 =>vielleicht am level etwas ändern vom BatteryController?
+
+bestes Regelergebnis (geringtste Spnnungsband-Verletzungen): 312
+F_end = 0.4, U_start = 0.01, U_end = 0.06, ki = 0.5, vals_to_sum = 15, kd = 0
 """
 import numpy as np
 import pandas as pd
@@ -30,6 +33,7 @@ import pptools as ppt
 from battery import Battery
 from scenario import Scenario
 from battery_controller import BatteryController
+from controllable_battery import ControllableBattery
 
 # Variablen zum Steuern der simulierten Szenarien
 same_arrival = True
@@ -44,6 +48,9 @@ distance_travelled = 200
 controlling = True
 
 cosphi = 0.9
+
+#Regelparameter für die Ladesäule einstellen
+ControllableBattery.set_control_params('Ki', 1.5)
 
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
@@ -70,8 +77,6 @@ if same_travelled:
 data_nuernberg = pd.read_csv('Daten/Lastprofil/Nuernberg_absolut_final.csv')
 
 baseload = ppt.prepare_baseload(data_nuernberg, net)
-    
-#scenario_data, loading_data = ppt.apply_scenario(baseload, net, fun_scenario)
 
 batteries, datasource_bat = ppt.prepare_batteries(net, fun_scenario)
 

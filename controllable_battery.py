@@ -18,6 +18,13 @@ class ControllableBattery:
     
     __data_source = None
     
+    _controlling_params = {'Ki':0.5,
+                           'vals to sum':15,
+                           'Kd':0,
+                           'U_end':0.06,
+                           'U_start':0.01,
+                           'F_end':0.4}
+    
     def __init__(self, net, at_load, according_bus, energy, power,
                  distance_travelled, consumption, arrival, u_ls=4.2, u_n=3.6,
                  i_ls=0.3, s=80):
@@ -97,25 +104,29 @@ class ControllableBattery:
     def reduce_power(self, timestep, delta_u, delta_sum, delta_dif):
         # reduziert die Ladeleistung in Abhängigkeit der
         # Spannungsunterschreitung -> p-Anteil
+        u_start = type(self)._controlling_params['U_start']
+        u_end = type(self)._controlling_params['U_end']
+        f_end = type(self)._controlling_params['F_end']
+        m = (1-f_end)/(u_start-u_end)
             
-        if delta_u < 0.01:
+        if delta_u < u_start:
             factor = 1
             
-        elif delta_u >= 0.01 and delta_u < 0.06: # schwächste Steigung
-            factor = -0.4/0.05 * delta_u + 1.08
+        elif delta_u >= u_start and delta_u < u_end: # schwächste Steigung
+            factor = m * delta_u + (1 - u_start *m)
             
-        elif delta_u >= 0.06: #
-            factor = 0.6
+        elif delta_u >= u_end: #
+            factor = f_end
             
-        factor -= delta_sum*0.5
-        factor -= delta_dif*0
+        factor -= delta_sum * type(self)._controlling_params['Ki']
+        factor -= delta_dif * type(self)._controlling_params['Kd']
         #print('\nerrechneter Faktor für Batterie Nr. {} zum Zeitpunkt {}: {} aufgrund delta_u {}'.format(self.at_load, timestep, factor, delta_u))
         self.current_power *= factor
         
         
     def sum_deltas(self, delta_u):
         # i-Anteil
-        if len(self.last_dus) < 15:
+        if len(self.last_dus) < type(self)._controlling_params['vals to sum']:
             self.last_dus.append(delta_u)
             
         else:
@@ -138,14 +149,10 @@ class ControllableBattery:
             delta_dif = delta_u - self.last_dus[-2]
             
         return delta_dif
+    
+    
+    @classmethod
+    def set_control_params(cls, parameter, value):
+        cls._controlling_params[parameter] = value
             
         
-    def print_interest(self, timestep):
-        if self.at_load == 17:
-            print(f'\nLadestand zum timestep {timestep}: {self.current_soc}')
-            print(f'Ladeleistung zum timestep {timestep}: {self.current_power}\n')
-            
-            
-    def print_violated(self, timestep):
-        print('Batterie am Knoten {} (Last Nr {}) reagiert zu Zeitschritt {}.\
-              '.format(self.according_bus, self.at_load, timestep))
