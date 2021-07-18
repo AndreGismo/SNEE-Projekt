@@ -117,14 +117,25 @@ class Scenario:
             #self.scenario_data['load nr.'] = self.scenario_data['load nr.'].astype(int)
                     
     
-    def set_constant(self, parameter, value, inplace=False):
+    def set_constant(self, parameter, value, at_load=None, inplace=False):
         if not inplace:
             copied = copy.deepcopy(self)
-            copied.scenario_data.loc[:, parameter] = value
+            if at_load == None:
+                copied.scenario_data.loc[:, parameter] = value
+            else:
+                for load in at_load:
+                    filt = copied.scenario_data['load nr.'] == load
+                    copied.scenario_data.loc[filt, parameter] = value
             return copied
         
         else:
-            self.scenario_data.loc[:, parameter] = value
+            if at_load == None:
+                self.scenario_data.loc[:, parameter] = value
+            else:
+                for load in at_load:
+                    filt = self.scenario_data['load nr.'] == load
+                    self.scenario_data.loc[filt, parameter] = value
+                
         
         
         
