@@ -120,6 +120,8 @@ class ControllableBattery:
             
         factor -= delta_sum * type(self)._controlling_params['Ki']
         factor -= delta_dif * type(self)._controlling_params['Kd']
+        if factor < 0:
+            factor = 0
         #print('\nerrechneter Faktor für Batterie Nr. {} zum Zeitpunkt {}: {} aufgrund delta_u {}'.format(self.at_load, timestep, factor, delta_u))
         self.current_power *= factor
         
