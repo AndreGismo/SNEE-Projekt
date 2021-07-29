@@ -35,46 +35,66 @@ from scenario import Scenario
 from battery_controller import BatteryController
 from controllable_battery import ControllableBattery
 
-# Variablen zum Steuern der simulierten Szenarien
-same_arrival = True
+#### zeitliche Auflösung der Simulation ######################################
+resolution = '1min'
+
+#### Variablen zum Steuern der simulierten Szenarien #########################
+# Ankunftszeit (in Viertelstunden => 0800 wäre 32)
+same_arrival = False
 arrival_time = 46
 
-same_power = True
+same_power = False
 loading_power = 11.1
 
 same_travelled = True
 distance_travelled = 200
 
-controlling = True
+# macht nur Sinn, einen der beiden auf True zu setzen
+far_from_trafo = False
+near_trafo = False
 
+# soll geregelt werden?
+controlling = False
+
+# wie hoch ist der PowerFactor der Haushalte?
 cosphi = 0.9
 
 #Regelparameter für die Ladesäule einstellen
-ControllableBattery.set_control_params('Ki', 1.5)
+ControllableBattery.set_control_params('Ki', 0.5)
+ControllableBattery.set_control_params('Kd', 0.1)
 
 #### Netz bauen ##############################################################
 # leeres Netz erzeugen
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-fun_scenario = Scenario.load_scenario('Szenario80')
+fun_scenario = Scenario.load_scenario('Szenario100')
 
 if same_arrival:
     fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)
+    #fun_scenario.set_constant('time of arrival', 60, [22,70,80], inplace=True)
     
 if same_power:
-    fun_scenario.set_constant('charging power [kW]', loading_power,
-                              inplace=True)
+    fun_scenario.set_constant('charging power [kW]', loading_power, inplace=True)
+    #fun_scenario.set_constant('charging power [kW]', 33, [20], inplace=True)
+
     
 if same_travelled:
     fun_scenario.set_constant('distance travelled [km]', distance_travelled,
                               inplace=True)
+
+if near_trafo:    
+    fun_scenario.distribute_loads(inplace=True, near_trafo=True)
     
-#fun_scenario.distribute_loads(inplace=True, near_trafo=True)
+if far_from_trafo:
+    fun_scenario.distribute_loads(inplace=True, near_trafo=False)
     
 #### Daten für die einzelnen loads erzeugen (96, 146) ########################
 # das sind die Daten vom 13.12.2020, weil es da den höchsten peak gab
 data_nuernberg = pd.read_csv('Daten/Lastprofil/Nuernberg_absolut_final.csv')
+
+# nur bestimmten Zeitraum (nicht kompletten Tag) simulieren:
+#data_nuernberg = ppt.set_simulation_range(data_nuernberg)
 
 baseload = ppt.prepare_baseload(data_nuernberg, net)
 
@@ -152,7 +172,7 @@ print(f'Maximal belastete Leitung: {crit_line}')
 fig_bus, ax_bus = plt.subplots(1, 1, figsize=(15, 8))
 ax_bus.plot(results_bus[str(crit_bus)], '-x')
 ax_bus.set_title('Spannungsverlauf am meistbelasteten Knoten Nr. {}\
-                 '.format(crit_bus))
+                  '.format(crit_bus))
 ax_bus.grid()
 ax_bus.set_xlabel('Zeitpunkt [MM-TT hh]')
 ax_bus.set_ylabel('Spannung [V]')
@@ -193,7 +213,7 @@ fig_bus_volt, ax_bus_volt = plt.subplots(1, 1, figsize=(15,8))
 for i in range(1, 11):
     volts = results_bus.loc['2020-01-01 19:30:00', buses_in_x[i-1]].values
     ax_bus_volt.plot(list(range(len(volts))), volts, '-x',
-                     label=f'Verlauf der Spannung im Strang Nr. {i}')
+                      label=f'Verlauf der Spannung im Strang Nr. {i}')
     
 ax_bus_volt.legend()
 ax_bus_volt.grid()
@@ -201,7 +221,7 @@ ax_bus_volt.set_title('Verlauf der Spannung in den einzelnen Strängen')
 ax_bus_volt.set_xlabel('Knoten Nr. ausgehend vom Transformator')
 ax_bus_volt.set_ylabel('Spannung [V]')
 
-#### Das Netwerk graphisch darstellen ########################################
+### Das Netwerk graphisch darstellen ########################################
 # trace, die alle buses enthält, die eine Ladesäule haben
 # figure = pt.simple_plotly(net)
 
@@ -216,7 +236,3 @@ violated_buses = load_controller_bat.get_violated_buses()
 print('Anzahl der Spannungsband-Verletzungen: {}'.format(violations))
 print('\nUnd die betroffenen buses: \n {}'.format(violated_buses))
 
-
-bats = 0
-for i in load_controller_bat.net_status['battery available']:
-    bats += i

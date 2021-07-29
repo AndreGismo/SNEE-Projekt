@@ -13,6 +13,18 @@ import pickle
 from controllable_battery import ControllableBattery
 
 
+def set_simulation_range(df, start=None, stop=None):
+    data = df.copy()
+    data.set_index(data.columns[0], inplace=True)
+    if start != None and stop != None:
+        print('Type des Index:', type(data.index))
+        start = '2020-12-13 ' + start
+        stop = '2020-12-13 ' + stop
+        data = data.loc[start:stop, :]
+        
+    return data
+
+
 def scale_df(df, consumption_year):
     '''
     Skaliert das DataFrame df derart, dass über ein gesamtes Jahr der
@@ -34,17 +46,32 @@ def scale_df(df, consumption_year):
     return df / 1e9 * consumption_year
 
 
-def prepare_baseload(df, net):
+def prepare_baseload(df, net, resolution=None):
     data = df.copy()
-    if 'Unnamed: 0' in data.columns:
-        data.drop('Unnamed: 0', axis=1, inplace=True)
+    if resolution != None:
+        if 'Unnamed: 0' in data.columns:
+            data.drop('Unnamed: 0', axis=1, inplace=True)
+            
+        data.index = pd.date_range(start=df.index[0], freq='15min', periods=len(df))
+        data_res = data.resample(resolution).interpolate()
         
-    for i in range(1, len(net.load)):
-        data[i] = data[data.columns[0]]
+        for i in range(1, len(net.load)):
+            data_res[i] = data_res[data_res.columns[0]]
+            
+        data_res.columns = net.load.index
+        data_res /= 1e6
+        return data_res
+    
+    else:
+        if 'Unnamed: 0' in data.columns:
+            data.drop('Unnamed: 0', axis=1, inplace=True)
         
-    data.columns = net.load.index
-    data /= 1e6
-    return data
+        for i in range(1, len(net.load)):
+            data[i] = data[data.columns[0]]
+            
+        data.columns = net.load.index
+        data /= 1e6
+        return data
 
 
 def prepare_batteries(net, scenario):
