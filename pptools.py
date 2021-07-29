@@ -60,6 +60,8 @@ def prepare_baseload(df, net, resolution=None):
             
         data_res.columns = net.load.index
         data_res /= 1e6
+        # index zurücksetzen für Kompatibilität mit pandapower
+        data_res.index = list(range(len(data_res)))
         return data_res
     
     else:

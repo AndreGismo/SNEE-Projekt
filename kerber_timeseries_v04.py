@@ -94,9 +94,9 @@ if far_from_trafo:
 data_nuernberg = pd.read_csv('Daten/Lastprofil/Nuernberg_absolut_final.csv')
 
 # nur bestimmten Zeitraum (nicht kompletten Tag) simulieren:
-#data_nuernberg = ppt.set_simulation_range(data_nuernberg)
+data_nuernberg = ppt.set_simulation_range(data_nuernberg, '08:00:00', '12:00:00')
 
-baseload = ppt.prepare_baseload(data_nuernberg, net)
+baseload = ppt.prepare_baseload(data_nuernberg, net, resolution)
 
 batteries, datasource_bat = ppt.prepare_batteries(net, fun_scenario)
 
