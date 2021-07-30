@@ -40,10 +40,10 @@ resolution = '1min'
 
 #### Variablen zum Steuern der simulierten Szenarien #########################
 # Ankunftszeit (in Viertelstunden => 0800 wäre 32)
-same_arrival = False
-arrival_time = 46
+same_arrival = True
+arrival_time = 46*15
 
-same_power = False
+same_power = True
 loading_power = 11.1
 
 same_travelled = True
@@ -54,7 +54,7 @@ far_from_trafo = False
 near_trafo = False
 
 # soll geregelt werden?
-controlling = False
+controlling = True
 
 # wie hoch ist der PowerFactor der Haushalte?
 cosphi = 0.9
@@ -94,11 +94,11 @@ if far_from_trafo:
 data_nuernberg = pd.read_csv('Daten/Lastprofil/Nuernberg_absolut_final.csv')
 
 # nur bestimmten Zeitraum (nicht kompletten Tag) simulieren:
-data_nuernberg = ppt.set_simulation_range(data_nuernberg, '08:00:00', '12:00:00')
+data_nuernberg = ppt.set_simulation_range(data_nuernberg)
 
 baseload = ppt.prepare_baseload(data_nuernberg, net, resolution)
 
-batteries, datasource_bat = ppt.prepare_batteries(net, fun_scenario)
+batteries, datasource_bat = ppt.prepare_batteries(net, fun_scenario, resolution)
 
 #### data source erzeugen ####################################################
 loads = DFData(baseload)

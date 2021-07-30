@@ -76,8 +76,9 @@ def prepare_baseload(df, net, resolution=None):
         return data
 
 
-def prepare_batteries(net, scenario):
+def prepare_batteries(net, scenario, resolution):
     batteries = []
+    resolution = int(resolution.rstrip('min'))
     for i in scenario.scenario_data.index:
         e_bat = scenario.scenario_data.at[i, 'battery size [kWh]']
         p_load = scenario.scenario_data.at[i, 'charging power [kW]']
@@ -89,11 +90,12 @@ def prepare_batteries(net, scenario):
         
         # eine entsprechende ControllableBattery erzeugen
         bat = ControllableBattery(net, at_load, at_bus, e_bat,
-                                  p_load, dist_travelled, consumption, arrival)
+                                  p_load, dist_travelled, consumption, arrival,
+                                  resolution=resolution)
         batteries.append(bat)
         
     columns = scenario.scenario_data['load nr.'].astype(int)
-    datasource = pd.DataFrame(index=list(range(96)), columns=columns)
+    datasource = pd.DataFrame(index=list(range(int(24*60/resolution))), columns=columns)
         
     return batteries, datasource # müssen an BatteryControler übergeben werden
 
