@@ -5,7 +5,7 @@ __pycache__
 res_bus
 res_line
 res_trafo
-*.csv
+#*.csv
 *.xlsx
 #*.pkl
 Test_Battery_ECar.py
