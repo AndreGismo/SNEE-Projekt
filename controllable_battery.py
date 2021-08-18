@@ -27,7 +27,7 @@ class ControllableBattery:
     
     def __init__(self, net, at_load, according_bus, energy, power,
                  distance_travelled, consumption, arrival, u_ls=4.2, u_n=3.6,
-                 i_ls=0.3, s=80):
+                 i_ls=0.3, s=80, resolution=15):
         self.at_load = int(at_load)
         self.according_bus = int(according_bus)
         self.energy = energy 
@@ -42,6 +42,7 @@ class ControllableBattery:
         self.s = s
         self.activate_controlling = False
         self.last_dus = []
+        self.resolution = resolution
         
         
     def register_datasource(self, datasource):
@@ -64,7 +65,7 @@ class ControllableBattery:
                 # ansonsten ist die Energie gleich der Energie des letzten
                 # Zeitpunkts + der Leistung des letzten Zeitpunkts
                 self.current_energy += self.data_source.df.at\
-                    [timestep-1, self.at_load]/4*1000
+                    [timestep-1, self.at_load]/(60/self.resolution)*1000
                 self.current_soc = self.current_energy/self.energy*100
         
     
