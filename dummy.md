@@ -1,3 +1,4 @@
+(distriutions)= 
 # Methodology for Research
 
 
@@ -8,6 +9,7 @@ In this chapter the methodology used for investigating the influences of BEV loa
 - implementing a model for charging of BEV battery
 - choosing and implementig of a distribution of arrival times for BEVs
 - choosing and implementing of a distribution for the travelled distances
+- choosing and implementing of a distribution for the nominal powers of the charging stations
 
 
 ## The Reference Grid
@@ -117,3 +119,16 @@ It ist to see, that most people arrive at 18:00 and nother peak at 22:00.
 
 
 blabla....
+
+
+## The Distribution of the Nominal Power of the Charging Stations
+
+
+blabla....
+
+
+(controlling_paragraph)=
+## The controller
+
+
+blabla
