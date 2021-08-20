@@ -1,4 +1,4 @@
-(distriutions)= 
+(distributions)= 
 # Methodology for Research
 
 
