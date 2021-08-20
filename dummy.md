@@ -2,7 +2,7 @@
 # Methodology for Research
 
 
-In this chapter the methodology used for investigating the influences of BEV loading on the local grid is beeing discussed. This methodology is separated into 4 parts:
+In this chapter the methodology used for investigating the influences of BEV loading on the local grid is beeing discussed. This methodology is separated into 7 parts:
 
 - choosing and implementing a reference grid
 - choosing and implementing of a standard load profile (SLP) for the households
@@ -10,6 +10,7 @@ In this chapter the methodology used for investigating the influences of BEV loa
 - choosing and implementig of a distribution of arrival times for BEVs
 - choosing and implementing of a distribution for the travelled distances
 - choosing and implementing of a distribution for the nominal powers of the charging stations
+- additionally a controller is beeing designed
 
 
 ## The Reference Grid
@@ -131,7 +132,49 @@ blabla....
 ## The controller
 
 
-blabla
+As a controller serves as a $P(U)$ controlling according the characteristic in the following [Figure 6](fig6):
+
+```{figure} img/controller.png
+:name: fig6
+:width: 700px
+Characteristic of the controller
+```
+
+The characteristic represents the P-element of the controller. The voltage drop $\Delta U$ is defied according Equation [Equation 6](eq6):
+
+```{math}
+:label: eq6
+\Delta U = \frac{400V - U_{node}}{400V} \cdot 100\%
+```
+
+Furthermore an I-element is used defined in Equation [](eq7):
+
+```{math}
+:label: eq7
+F_I = K_I \cdot \sum_{t-n}^{t} \Delta U(t)
+```
+
+And additionally a D-Element contributes to the controller according to Equation [](eq8):
+
+```{math}
+:label: eq8
+F_D = K_D \cdot (\Delta U (t) - \Delta U (t-1))
+```
+
+This results in a controlled power $P_{control}$ according to Equation [](eq9):
+
+```{math}
+:label: eq9
+P_{control} = P \cdot (F - F_D - F_I)
+```
+
+The complete control loop is shown in the following [Figure 7](fig7)
+
+```{figure} img/control-loop.png
+:name: fig7
+:width: 700px
+Controller loop
+```
 
 
 # Bibliography
