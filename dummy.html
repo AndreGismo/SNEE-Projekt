@@ -99,7 +99,7 @@
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Methodology
+   Methodology for Research
   </a>
  </li>
  <li class="toctree-l1">
@@ -181,39 +181,51 @@
             </div>
             <nav id="bd-toc-nav">
                 <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-reference-grid">
-   The Reference Grid
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Methodology for Research
   </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-reference-grid">
+     The Reference Grid
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-standard-load-profile">
+     The Standard Load Profile
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-model-for-charging-bev-battery">
+     The Model for charging BEV battery
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-distribution-of-arrival-times">
+     The Distribution of Arrival Times
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-distribution-of-travelled-distances">
+     The Distribution of travelled Distances
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-distribution-of-the-nominal-power-of-the-charging-stations">
+     The Distribution of the Nominal Power of the Charging Stations
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-controller">
+     The controller
+    </a>
+   </li>
+  </ul>
  </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-standard-load-profile">
-   The Standard Load Profile
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-model-for-charging-bev-battery">
-   The Model for charging BEV battery
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-distribution-of-arrival-times">
-   The Distribution of Arrival Times
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-distribution-of-travelled-distances">
-   The Distribution of travelled Distances
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-distribution-of-the-nominal-power-of-the-charging-stations">
-   The Distribution of the Nominal Power of the Charging Stations
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-controller">
-   The controller
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#bibliography">
+   Bibliography
   </a>
  </li>
 </ul>
@@ -229,7 +241,7 @@
                 
   <div class="section" id="methodology-for-research">
 <span id="distributions"></span><h1>Methodology for Research<a class="headerlink" href="#methodology-for-research" title="Permalink to this headline">¶</a></h1>
-<p>In this chapter the methodology used for investigating the influences of BEV loading on the local grid is beeing discussed. This methodology is separated into 4 parts:</p>
+<p>In this chapter the methodology used for investigating the influences of BEV loading on the local grid is beeing discussed. This methodology is separated into 7 parts:</p>
 <ul class="simple">
 <li><p>choosing and implementing a reference grid</p></li>
 <li><p>choosing and implementing of a standard load profile (SLP) for the households</p></li>
@@ -237,6 +249,7 @@
 <li><p>choosing and implementig of a distribution of arrival times for BEVs</p></li>
 <li><p>choosing and implementing of a distribution for the travelled distances</p></li>
 <li><p>choosing and implementing of a distribution for the nominal powers of the charging stations</p></li>
+<li><p>additionally a controller is beeing designed</p></li>
 </ul>
 <div class="section" id="the-reference-grid">
 <h2>The Reference Grid<a class="headerlink" href="#the-reference-grid" title="Permalink to this headline">¶</a></h2>
@@ -245,7 +258,7 @@
 <a class="reference internal image-reference" href="https://pandapower.readthedocs.io/en/develop/_images/kerber_vorstadtnetz_a.PNG"><img alt="https://pandapower.readthedocs.io/en/develop/_images/kerber_vorstadtnetz_a.PNG" src="https://pandapower.readthedocs.io/en/develop/_images/kerber_vorstadtnetz_a.PNG" style="width: 700px;" /></a>
 <p class="caption"><span class="caption-number">Fig. 2 </span><span class="caption-text">The kerber network used for simulation</span><a class="headerlink" href="#fig2" title="Permalink to this image">¶</a></p>
 </div>
-<p>This network represents the average network in German suburbs as derived in Kerbers doctoral thesis. All the loads attached are households.</p>
+<p>This network represents the average network in German suburbs as derived in <span id="id1">[<a class="reference internal" href="#id10">Ker11</a>]</span>. All the loads attached are households.</p>
 </div>
 <div class="section" id="the-standard-load-profile">
 <h2>The Standard Load Profile<a class="headerlink" href="#the-standard-load-profile" title="Permalink to this headline">¶</a></h2>
@@ -258,7 +271,7 @@
 </div>
 <div class="section" id="the-model-for-charging-bev-battery">
 <h2>The Model for charging BEV battery<a class="headerlink" href="#the-model-for-charging-bev-battery" title="Permalink to this headline">¶</a></h2>
-<p>The charging of the BEV battery is modelled according to Schneiders diploma thesis wich is given by the following equations:</p>
+<p>The charging of the BEV battery is modelled according to <span id="id2">[<a class="reference internal" href="#id12">Sch08</a>]</span> wich is given by the following equations:</p>
 <div class="math notranslate nohighlight" id="equation-eq1">
 <span class="eqno">(1)<a class="headerlink" href="#equation-eq1" title="Permalink to this equation">¶</a></span>\[P(SOC) = P_{max} \cdot e^{\left ( \tfrac{s - SOC}{k_L} \right )}\]</div>
 <div class="math notranslate nohighlight" id="equation-eq2">
@@ -323,12 +336,12 @@
 </div>
 <div class="section" id="the-distribution-of-arrival-times">
 <h2>The Distribution of Arrival Times<a class="headerlink" href="#the-distribution-of-arrival-times" title="Permalink to this headline">¶</a></h2>
-<p>The distribution of arrival times is beeing adopted from Doums Bachelor Thesis. The following <a class="reference internal" href="#fig5"><span class="std std-ref">Figure 5</span></a> shows the distribution:</p>
+<p>The distribution of arrival times is beeing adopted from <span id="id3">[<a class="reference internal" href="#id13">Dou15</a>]</span>. The following <a class="reference internal" href="#fig5"><span class="std std-ref">Figure 5</span></a> shows the distribution:</p>
 <div class="figure align-default" id="fig5">
 <a class="reference internal image-reference" href="_images/dist.png"><img alt="_images/dist.png" src="_images/dist.png" style="width: 700px;" /></a>
-<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">Distribution of the arrival time</span><a class="headerlink" href="#fig5" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">Distribution of the arrival time <span id="id4">[<a class="reference internal" href="#id13">Dou15</a>]</span></span><a class="headerlink" href="#fig5" title="Permalink to this image">¶</a></p>
 </div>
-<p>It ist to see, that most people arrive at 18:00 and nother peak at 22:00.</p>
+<p>It ist to see, that most people arrive at 18:00 and there is also another peak at 22:00.</p>
 </div>
 <div class="section" id="the-distribution-of-travelled-distances">
 <h2>The Distribution of travelled Distances<a class="headerlink" href="#the-distribution-of-travelled-distances" title="Permalink to this headline">¶</a></h2>
@@ -340,8 +353,44 @@
 </div>
 <div class="section" id="the-controller">
 <span id="controlling-paragraph"></span><h2>The controller<a class="headerlink" href="#the-controller" title="Permalink to this headline">¶</a></h2>
-<p>blabla</p>
+<p>As a controller serves as a <span class="math notranslate nohighlight">\(P(U)\)</span> controlling according the characteristic in the following <a class="reference internal" href="#fig6"><span class="std std-ref">Figure 6</span></a>:</p>
+<div class="figure align-default" id="fig6">
+<a class="reference internal image-reference" href="_images/controller.png"><img alt="_images/controller.png" src="_images/controller.png" style="width: 700px;" /></a>
+<p class="caption"><span class="caption-number">Fig. 6 </span><span class="caption-text">Characteristic of the controller</span><a class="headerlink" href="#fig6" title="Permalink to this image">¶</a></p>
 </div>
+<p>The characteristic represents the P-element of the controller. The voltage drop <span class="math notranslate nohighlight">\(\Delta U\)</span> is defied according Equation <a class="reference internal" href="#equation-eq6">(6)</a>:</p>
+<div class="math notranslate nohighlight" id="equation-eq6">
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq6" title="Permalink to this equation">¶</a></span>\[\Delta U = \frac{400V - U_{node}}{400V} \cdot 100\%\]</div>
+<p>Furthermore an I-element is used defined in Equation <a class="reference internal" href="#equation-eq7">(7)</a>:</p>
+<div class="math notranslate nohighlight" id="equation-eq7">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq7" title="Permalink to this equation">¶</a></span>\[F_I = K_I \cdot \sum_{t-n}^{t} \Delta U(t)\]</div>
+<p>And additionally a D-Element contributes to the controller according to Equation <a class="reference internal" href="#equation-eq8">(8)</a>:</p>
+<div class="math notranslate nohighlight" id="equation-eq8">
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq8" title="Permalink to this equation">¶</a></span>\[F_D = K_D \cdot (\Delta U (t) - \Delta U (t-1))\]</div>
+<p>This results in a controlled power <span class="math notranslate nohighlight">\(P_{control}\)</span> according to Equation <a class="reference internal" href="#equation-eq9">(9)</a>:</p>
+<div class="math notranslate nohighlight" id="equation-eq9">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq9" title="Permalink to this equation">¶</a></span>\[P_{control} = P \cdot (F - F_D - F_I)\]</div>
+<p>The complete control loop is shown in the following <a class="reference internal" href="#fig7"><span class="std std-ref">Figure 7</span></a></p>
+<div class="figure align-default" id="fig7">
+<a class="reference internal image-reference" href="_images/control-loop.png"><img alt="_images/control-loop.png" src="_images/control-loop.png" style="width: 700px;" /></a>
+<p class="caption"><span class="caption-number">Fig. 7 </span><span class="caption-text">Controller loop</span><a class="headerlink" href="#fig7" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="bibliography">
+<h1>Bibliography<a class="headerlink" href="#bibliography" title="Permalink to this headline">¶</a></h1>
+<p id="id5"><dl class="citation">
+<dt class="label" id="id13"><span class="brackets">Dou15</span><span class="fn-backref">(<a href="#id3">1</a>,<a href="#id4">2</a>)</span></dt>
+<dd><p>Thorben Doum. Notwendigkeit und Rahmenbedingungen eines Lastmanagements in Niederspannungsnetzen. <em>Technische Hochschule Köln</em>, 2015. URL: <a class="reference external" href="http://www.100pro-erneuerbare.com/netze/publikationen/2015-06-Doum/Doum-Lastmanagement_Elektromobilitaet.htm">http://www.100pro-erneuerbare.com/netze/publikationen/2015-06-Doum/Doum-Lastmanagement_Elektromobilitaet.htm</a> (visited on 2021-07-17).</p>
+</dd>
+<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id1">Ker11</a></span></dt>
+<dd><p>Georg Kerber. Aufnahmefähigkeit von Niederspannungsverteilnetzen für die Einspeisung aus Photovoltaikkleinanlagen. <em>Technische Universität München</em>, pages 150, 2011.</p>
+</dd>
+<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id2">Sch08</a></span></dt>
+<dd><p>Andreas Schuster. Batterie- bzw. Wasserstoffspeicher bei elektrischen Fahrzeugen. <em>Technische Universität Wien</em>, 2008. URL: <a class="reference external" href="https://repositum.tuwien.at/handle/20.500.12708/12337">https://repositum.tuwien.at/handle/20.500.12708/12337</a> (visited on 2021-08-20).</p>
+</dd>
+</dl>
+</p>
 </div>
 
     <script type="text/x-thebe-config">
