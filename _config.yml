@@ -5,6 +5,9 @@ logo: img/SNEE-logo.jpg
 execute:
     execute_notebooks: "off"
 
+bibtex_bibfiles:
+    - references.bib
+
 html:
     extra_navbar: |
         <div>

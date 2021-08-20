@@ -26,7 +26,7 @@ The reference grid used for the simulation is a [kerber network](https://pandapo
 The kerber network used for simulation
 ```
 
-This network represents the average network in German suburbs as derived in Kerbers doctoral thesis. All the loads attached are households.
+This network represents the average network in German suburbs as derived in {cite:p}`kerber_aufnahmefahigkeit_2011`. All the loads attached are households.
 
 
 ## The Standard Load Profile
@@ -46,7 +46,7 @@ The values are considered to be real power.
 ## The Model for charging BEV battery
 
 
-The charging of the BEV battery is modelled according to Schneiders diploma thesis wich is given by the following equations:
+The charging of the BEV battery is modelled according to {cite:p}`schuster_batterie-_2008` wich is given by the following equations:
 
 ```{math}
 :label: eq1
@@ -104,15 +104,15 @@ SOC_{n+1} = SOC_n + P(SOC_n) \cdot \Delta t
 ## The Distribution of Arrival Times
 
 
-The distribution of arrival times is beeing adopted from Doums Bachelor Thesis. The following [Figure 5](fig5) shows the distribution:
+The distribution of arrival times is beeing adopted from {cite:p}`Doum_Notw_2015`. The following [Figure 5](fig5) shows the distribution:
 
 ```{figure} img/dist.png
 :name: fig5
 :width: 700px
-Distribution of the arrival time
+Distribution of the arrival time {cite:p}`Doum_Notw_2015`
 ```
 
-It ist to see, that most people arrive at 18:00 and nother peak at 22:00.
+It ist to see, that most people arrive at 18:00 and there is also another peak at 22:00.
 
 
 ## The Distribution of travelled Distances
@@ -132,3 +132,11 @@ blabla....
 
 
 blabla
+
+
+# Bibliography
+
+
+```{bibliography}
+:filter: docname in docnames
+```
