@@ -16,7 +16,5 @@ A klick on the Rocket symbol on the top right makes it possible to start an inte
 Another possibility is to choose "Binder" to open a remote jupyter session.
 
 __Beware:__<br>
-A limiting factor for these remote sessions as well as the interactive coding sessions is the limited available RAM as well as limited CPU. One way to overcome this, is to download the GitHub Repository and run these notebooks on a local computer (provided jupyter and a suitable environment as given [in here](https://github.com/AndreGismo/SNEE-Projekt/blob/master/.binder/environment.yml)). The easiest way to accomplish this is by downloading [Anaconda](https://www.anaconda.com/products/individual).
+A limiting factor for too big simulations might be the limited available RAM and CPU for live-code and jupyter-sessions. One way to overcome this, is to download the GitHub Repository and run these notebooks on a local computer (provided jupyter and a suitable environment as given [in here](https://github.com/AndreGismo/SNEE-Projekt/blob/master/.binder/environment.yml)). The easiest way to accomplish this is by downloading [Anaconda](https://www.anaconda.com/products/individual).
 ````
-
-
