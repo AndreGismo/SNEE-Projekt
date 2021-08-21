@@ -428,12 +428,13 @@ This way the controlling parameters described in <a class="reference internal" h
 </div>
 <div class="section" id="creating-a-scenario">
 <h3>Creating a Scenario<a class="headerlink" href="#creating-a-scenario" title="Permalink to this headline">¶</a></h3>
-<div class="margin sidebar">
-<p class="sidebar-title"></p>
-<div class="tip admonition">
+<div class="tip dropdown admonition">
 <p class="admonition-title">Tip</p>
-<p>It is also possible to create new scenarios using <code class="docutils literal notranslate"><span class="pre">Scenario(net,</span> <span class="pre">&lt;penetration&gt;)</span></code>. However, this will slightly change the underlying distributions (as the seed used for generating random choices isn’t fixed).</p>
+<p>It is also possible to create new scenarios using</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span> <span class="o">=</span> <span class="n">Scenario</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">penetration</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
 </div>
+<p>However, this might change the underlying distributions (as the seed used for generating random choices isn’t fixed).</p>
 </div>
 <p>Next choose one of the <a class="reference internal" href="intro.html#scenarios"><span class="std std-ref">proposed scenarios</span></a>. The scenarios satisfy all of the <a class="reference internal" href="dummy.html#distributions"><span class="std std-ref">proposed distributions</span></a> but might be altered by the <a class="reference internal" href="#settings"><span class="std std-ref">settings choosen above</span></a>.</p>
 <div class="cell docutils container">
@@ -474,14 +475,13 @@ This way the controlling parameters described in <a class="reference internal" h
 <span class="c1"># compute factor for share of Q out of P with cosphi</span>
 <span class="n">faktor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">cosphi</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
 
-<span class="c1"># data_source for Q</span>
+<span class="c1"># data_source for reactive Power Q</span>
 <span class="n">loads_q</span> <span class="o">=</span> <span class="n">DFData</span><span class="p">(</span><span class="n">baseload</span> <span class="o">*</span> <span class="n">faktor</span><span class="p">)</span>
 
-<span class="c1"># data_source für Ladekurven der e-Autos</span>
+<span class="c1"># data_source for loading curves of BEVs</span>
 <span class="n">loads_bat</span> <span class="o">=</span> <span class="n">DFData</span><span class="p">(</span><span class="n">datasource_bat</span><span class="p">)</span>
 
-<span class="c1"># controler erzeugen, der die Werte der loads zu den jeweiligen Zeitpukten</span>
-<span class="c1"># entsprechend loads setzt</span>
+<span class="c1"># creating controllers</span>
 <span class="n">load_controler</span> <span class="o">=</span> <span class="n">control</span><span class="o">.</span><span class="n">ConstControl</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;p_mw&#39;</span><span class="p">,</span>
                                       <span class="n">element_index</span><span class="o">=</span><span class="n">net</span><span class="o">.</span><span class="n">load</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
                                       <span class="n">data_source</span><span class="o">=</span><span class="n">loads</span><span class="p">,</span>
@@ -500,17 +500,16 @@ This way the controlling parameters described in <a class="reference internal" h
     <span class="n">load_controller_bat</span><span class="o">.</span><span class="n">activate_contolling</span><span class="p">()</span>
 
 
-<span class="c1"># output writer erzeugen, der die Ergebnisse für jeden Timestep in eine</span>
-<span class="c1"># csv-Datei je load schreibt</span>
+<span class="c1"># output writer </span>
 <span class="n">writer</span> <span class="o">=</span> <span class="n">timeseries</span><span class="o">.</span><span class="n">OutputWriter</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
                                  <span class="n">output_file_type</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">)</span>
 
-<span class="c1"># festlegen, welche Variablen geloggt werden sollen</span>
+<span class="c1"># which variables to log</span>
 <span class="n">writer</span><span class="o">.</span><span class="n">log_variable</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="s1">&#39;res_bus&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;vm_pu&#39;</span><span class="p">)</span>
 <span class="n">writer</span><span class="o">.</span><span class="n">log_variable</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="s1">&#39;res_line&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;loading_percent&#39;</span><span class="p">)</span>
 <span class="n">writer</span><span class="o">.</span><span class="n">log_variable</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="s1">&#39;res_trafo&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;loading_percent&#39;</span><span class="p">)</span>
 
-<span class="c1"># timeseries simulieren ((95+1) * 15min = 1Tag)</span>
+<span class="c1"># simulate timeseries</span>
 <span class="n">timeseries</span><span class="o">.</span><span class="n">run_timeseries</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -553,7 +552,6 @@ This way the controlling parameters described in <a class="reference internal" h
 <span class="c1"># configure layout of following plots</span>
 <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">15</span><span class="p">:</span>
     <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
     <span class="n">marker</span><span class="o">=</span><span class="kc">None</span>
@@ -563,7 +561,6 @@ This way the controlling parameters described in <a class="reference internal" h
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Maximal belasteter Bus: 273
 Maximal belastete Leitung: 220
-hello
 </pre></div>
 </div>
 </div>
