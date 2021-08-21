@@ -143,7 +143,7 @@ The distribution is taken from {cite:p}`goel_stromtankstellen_nodate`, only take
 |11.1|0.55|
 |22.2|0.10|
 
-Thee values determine the $P_{max}$ in Equation [](eq1).
+These values determine the $P_{max}$ in Equation [](eq1).
 
 
 (controlling_paragraph)=

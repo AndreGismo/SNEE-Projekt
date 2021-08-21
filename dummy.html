@@ -44,9 +44,9 @@
     <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
+        const thebe_selector = ".thebe,.cell"
+        const thebe_selector_input = "pre,.cell_input div.highlight"
+        const thebe_selector_output = ".output,.cell_output"
     </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -161,6 +161,19 @@
 </div>
 
             <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/AndreGismo/SNEE-Projekt"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
 
             <!-- Full screen (wrap in <a> to have style consistency -->
 
@@ -393,7 +406,7 @@
 </tr>
 </tbody>
 </table>
-<p>Thee values determine the <span class="math notranslate nohighlight">\(P_{max}\)</span> in Equation <a class="reference internal" href="#equation-eq1">(1)</a>.</p>
+<p>These values determine the <span class="math notranslate nohighlight">\(P_{max}\)</span> in Equation <a class="reference internal" href="#equation-eq1">(1)</a>.</p>
 </div>
 <div class="section" id="the-controller">
 <span id="controlling-paragraph"></span><h2>The controller<a class="headerlink" href="#the-controller" title="Permalink to this headline">¶</a></h2>
@@ -437,7 +450,7 @@
 <dd><p>Thorben Doum. Notwendigkeit und Rahmenbedingungen eines Lastmanagements in Niederspannungsnetzen. <em>Technische Hochschule Köln</em>, 2015. URL: <a class="reference external" href="http://www.100pro-erneuerbare.com/netze/publikationen/2015-06-Doum/Doum-Lastmanagement_Elektromobilitaet.htm">http://www.100pro-erneuerbare.com/netze/publikationen/2015-06-Doum/Doum-Lastmanagement_Elektromobilitaet.htm</a> (visited on 2021-07-17).</p>
 </dd>
 <dt class="label" id="id21"><span class="brackets"><a class="fn-backref" href="#id8">goi</a></span></dt>
-<dd><p>goingElectric. Stromtankstellen Statistik Deutschland \textbar  GoingElectric.de. URL: <a class="reference external" href="https://www.goingelectric.de/stromtankstellen/statistik/Deutschland">https://www.goingelectric.de/stromtankstellen/statistik/Deutschland</a> (visited on 2021-06-23).</p>
+<dd><p>goingElectric. Stromtankstellen Statistik Deutschland. URL: <a class="reference external" href="https://www.goingelectric.de/stromtankstellen/statistik/Deutschland">https://www.goingelectric.de/stromtankstellen/statistik/Deutschland</a> (visited on 2021-06-23).</p>
 </dd>
 <dt class="label" id="id14"><span class="brackets"><a class="fn-backref" href="#id1">Ker11</a></span></dt>
 <dd><p>Georg Kerber. Aufnahmefähigkeit von Niederspannungsverteilnetzen für die Einspeisung aus Photovoltaikkleinanlagen. <em>Technische Universität München</em>, pages 150, 2011.</p>
@@ -453,7 +466,7 @@
     {
         requestKernel: true,
         binderOptions: {
-            repo: "binder-examples/jupyter-stacks-datascience",
+            repo: "AndreGismo/SNEE-Projekt",
             ref: "master",
         },
         codeMirrorConfig: {

@@ -44,9 +44,9 @@
     <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
+        const thebe_selector = ".thebe,.cell"
+        const thebe_selector_input = "pre,.cell_input div.highlight"
+        const thebe_selector_output = ".output,.cell_output"
     </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -158,6 +158,19 @@
 
             <!-- Source interaction buttons -->
 
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/AndreGismo/SNEE-Projekt"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
             <!-- Full screen (wrap in <a> to have style consistency -->
 
 <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
@@ -185,13 +198,15 @@
 <p>Mit <code class="docutils literal notranslate"><span class="pre">pandapower</span></code> simulieren, wie viele Elektrofahrzeuge gleichzeitig aus dem Netz geladen werden können. Als Referenznetz dient ein <a class="reference external" href="https://pandapower.readthedocs.io/en/v2.6.0/networks/kerber.html#average-kerber-networks">Kerber-Netzwerk</a>
 einer typischen Vorstadt.<br> Als Lastprofil für die einzelnen Hausanschlüsse wird ein Standardlastprofil “H0A” der <a class="reference external" href="https://www.n-ergie-netz.de/startseite/produkte-dienstleistungen/netznutzung/netznutzung-strom/%21ut/p/z1/04_Sj9CPykssy0xPLMnMz0vMAfIjo8zifT2dDQyd_A18DfzCzAwCXQ0Ng52Ngg39jMz0w_EpMDY114-iRL-lGXH6DVCAo4FTkJGTsYGBu78ROfqRTaLI_SAFUfiND9ePwmuFsxF-BeAgxqvA0piQAjOoAnyhSMgfBbmhQBBhkOmZ6QkA7tlcaw%21%21/dz/d5/L2dBISEvZ0FBIS9nQSEh/">N_ERGIE netz</a> von 2020 verwendet.</p>
 <p>Hier geht es zum <a class="reference external" href="https://andregismo.github.io/SNEE-Projekt/">jupyter book</a>.</p>
+<p>Und hier geht es zum binder:</p>
+<p><a class="reference external" href="https://mybinder.org/v2/gh/AndreGismo/SNEE-Projekt/HEAD"><img alt="Binder" src="https://mybinder.org/badge_logo.svg" /></a></p>
 </div>
 
     <script type="text/x-thebe-config">
     {
         requestKernel: true,
         binderOptions: {
-            repo: "binder-examples/jupyter-stacks-datascience",
+            repo: "AndreGismo/SNEE-Projekt",
             ref: "master",
         },
         codeMirrorConfig: {

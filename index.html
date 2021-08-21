@@ -44,9 +44,9 @@
     <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
+        const thebe_selector = ".thebe,.cell"
+        const thebe_selector_input = "pre,.cell_input div.highlight"
+        const thebe_selector_output = ".output,.cell_output"
     </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -159,6 +159,19 @@
 
             <!-- Source interaction buttons -->
 
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/AndreGismo/SNEE-Projekt"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
             <!-- Full screen (wrap in <a> to have style consistency -->
 
 <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
@@ -194,7 +207,7 @@
 <p>A klick on the Rocket symbol on the top right makes it possible to start an interactive coding session with “Live Code”.
 Another possibility is to choose “Binder” to open a remote jupyter session.</p>
 <p><strong>Beware:</strong><br>
-A limiting factor for these remote sessions as well as the interactive coding sessions is the limited available disc space as well as limited computational ressources. One way to overcome this, is to download the GitHub Repository and run these notebooks on a local computer (provided jupyter and a suitable environment as given <a class="reference external" href="https://github.com/AndreGismo/SNEE-Projekt/blob/master/.binder/environment.yml">in here</a>). The easiest way to accomplish this is by downloading <a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda</a>.</p>
+A limiting factor for these remote sessions as well as the interactive coding sessions is the limited available RAM as well as limited CPU. One way to overcome this, is to download the GitHub Repository and run these notebooks on a local computer (provided jupyter and a suitable environment as given <a class="reference external" href="https://github.com/AndreGismo/SNEE-Projekt/blob/master/.binder/environment.yml">in here</a>). The easiest way to accomplish this is by downloading <a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda</a>.</p>
 </div>
 <div class="toctree-wrapper compound">
 </div>
@@ -204,7 +217,7 @@ A limiting factor for these remote sessions as well as the interactive coding se
     {
         requestKernel: true,
         binderOptions: {
-            repo: "binder-examples/jupyter-stacks-datascience",
+            repo: "AndreGismo/SNEE-Projekt",
             ref: "master",
         },
         codeMirrorConfig: {
