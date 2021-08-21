@@ -258,7 +258,7 @@
 <a class="reference internal image-reference" href="https://pandapower.readthedocs.io/en/develop/_images/kerber_vorstadtnetz_a.PNG"><img alt="https://pandapower.readthedocs.io/en/develop/_images/kerber_vorstadtnetz_a.PNG" src="https://pandapower.readthedocs.io/en/develop/_images/kerber_vorstadtnetz_a.PNG" style="width: 700px;" /></a>
 <p class="caption"><span class="caption-number">Fig. 2 </span><span class="caption-text">The kerber network used for simulation</span><a class="headerlink" href="#fig2" title="Permalink to this image">¶</a></p>
 </div>
-<p>This network represents the average network in German suburbs as derived in <span id="id1">[<a class="reference internal" href="#id10">Ker11</a>]</span>. All the loads attached are households.</p>
+<p>This network represents the average network in German suburbs as derived in <span id="id1">[<a class="reference internal" href="#id14">Ker11</a>]</span>. All the loads attached are households.</p>
 </div>
 <div class="section" id="the-standard-load-profile">
 <h2>The Standard Load Profile<a class="headerlink" href="#the-standard-load-profile" title="Permalink to this headline">¶</a></h2>
@@ -271,7 +271,7 @@
 </div>
 <div class="section" id="the-model-for-charging-bev-battery">
 <h2>The Model for charging BEV battery<a class="headerlink" href="#the-model-for-charging-bev-battery" title="Permalink to this headline">¶</a></h2>
-<p>The charging of the BEV battery is modelled according to <span id="id2">[<a class="reference internal" href="#id12">Sch08</a>]</span> wich is given by the following equations:</p>
+<p>The charging of the BEV battery is modelled according to <span id="id2">[<a class="reference internal" href="#id16">Sch08</a>]</span> wich is given by the following equations:</p>
 <div class="math notranslate nohighlight" id="equation-eq1">
 <span class="eqno">(1)<a class="headerlink" href="#equation-eq1" title="Permalink to this equation">¶</a></span>\[P(SOC) = P_{max} \cdot e^{\left ( \tfrac{s - SOC}{k_L} \right )}\]</div>
 <div class="math notranslate nohighlight" id="equation-eq2">
@@ -336,20 +336,64 @@
 </div>
 <div class="section" id="the-distribution-of-arrival-times">
 <h2>The Distribution of Arrival Times<a class="headerlink" href="#the-distribution-of-arrival-times" title="Permalink to this headline">¶</a></h2>
-<p>The distribution of arrival times is beeing adopted from <span id="id3">[<a class="reference internal" href="#id13">Dou15</a>]</span>. The following <a class="reference internal" href="#fig5"><span class="std std-ref">Figure 5</span></a> shows the distribution:</p>
+<p>The distribution of arrival times is beeing adopted from <span id="id3">[<a class="reference internal" href="#id17">Dou15</a>]</span>. The following <a class="reference internal" href="#fig5"><span class="std std-ref">Figure 5</span></a> shows the distribution:</p>
 <div class="figure align-default" id="fig5">
 <a class="reference internal image-reference" href="_images/dist.png"><img alt="_images/dist.png" src="_images/dist.png" style="width: 700px;" /></a>
-<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">Distribution of the arrival time <span id="id4">[<a class="reference internal" href="#id13">Dou15</a>]</span></span><a class="headerlink" href="#fig5" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">Distribution of the arrival time <span id="id4">[<a class="reference internal" href="#id17">Dou15</a>]</span></span><a class="headerlink" href="#fig5" title="Permalink to this image">¶</a></p>
 </div>
 <p>It ist to see, that most people arrive at 18:00 and there is also another peak at 22:00.</p>
 </div>
 <div class="section" id="the-distribution-of-travelled-distances">
 <h2>The Distribution of travelled Distances<a class="headerlink" href="#the-distribution-of-travelled-distances" title="Permalink to this headline">¶</a></h2>
-<p>blabla….</p>
+<p>The distribution of the travelled distances is taken from <span id="id5">[<a class="reference internal" href="#id18">sta</a>]</span>. The vaues provided for 2020 are downscaled to one day (assuming 365 days driving per year). These downscaled values are given in the following table:</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Distance travelled [km]</p></th>
+<th class="head"><p>Probability [-]</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>0.13</p></td>
+</tr>
+<tr class="row-odd"><td><p>21</p></td>
+<td><p>0.29</p></td>
+</tr>
+<tr class="row-even"><td><p>35</p></td>
+<td><p>0.30</p></td>
+</tr>
+<tr class="row-odd"><td><p>50</p></td>
+<td><p>0.15</p></td>
+</tr>
+<tr class="row-even"><td><p>60</p></td>
+<td><p>0.13</p></td>
+</tr>
+</tbody>
+</table>
+<p>These values determine the <span class="math notranslate nohighlight">\(d\)</span> in Equation <a class="reference internal" href="#equation-eq4">(4)</a>. Furthermore the mean consumption of BEVs is taken as <span class="math notranslate nohighlight">\(c=17.7 \frac{kWh}{100km}\)</span> and the battery capacity as <span class="math notranslate nohighlight">\(E_{nom}=52kWh\)</span> (Values of the most sold BEV <span id="id6">[<a class="reference internal" href="#id19">ADA</a>]</span> according to <span id="id7">[<a class="reference internal" href="#id20">Ren</a>]</span>).</p>
 </div>
 <div class="section" id="the-distribution-of-the-nominal-power-of-the-charging-stations">
 <h2>The Distribution of the Nominal Power of the Charging Stations<a class="headerlink" href="#the-distribution-of-the-nominal-power-of-the-charging-stations" title="Permalink to this headline">¶</a></h2>
-<p>blabla….</p>
+<p>The distribution is taken from <span id="id8">[<a class="reference internal" href="#id21">goi</a>]</span>, only taken into account the first three categories. This results in the values given in the following table:</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Charging power [kW]</p></th>
+<th class="head"><p>probability</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>3.7</p></td>
+<td><p>0.35</p></td>
+</tr>
+<tr class="row-odd"><td><p>11.1</p></td>
+<td><p>0.55</p></td>
+</tr>
+<tr class="row-even"><td><p>22.2</p></td>
+<td><p>0.10</p></td>
+</tr>
+</tbody>
+</table>
+<p>Thee values determine the <span class="math notranslate nohighlight">\(P_{max}\)</span> in Equation <a class="reference internal" href="#equation-eq1">(1)</a>.</p>
 </div>
 <div class="section" id="the-controller">
 <span id="controlling-paragraph"></span><h2>The controller<a class="headerlink" href="#the-controller" title="Permalink to this headline">¶</a></h2>
@@ -379,14 +423,26 @@
 </div>
 <div class="section" id="bibliography">
 <h1>Bibliography<a class="headerlink" href="#bibliography" title="Permalink to this headline">¶</a></h1>
-<p id="id5"><dl class="citation">
-<dt class="label" id="id13"><span class="brackets">Dou15</span><span class="fn-backref">(<a href="#id3">1</a>,<a href="#id4">2</a>)</span></dt>
+<p id="id9"><dl class="citation">
+<dt class="label" id="id19"><span class="brackets"><a class="fn-backref" href="#id6">ADA</a></span></dt>
+<dd><p>Elektroautos: Besser spät als nie. URL: <a class="reference external" href="https://www.adac.de/rund-ums-fahrzeug/elektromobilitaet/info/elektroauto-bilanz/">https://www.adac.de/rund-ums-fahrzeug/elektromobilitaet/info/elektroauto-bilanz/</a> (visited on 2021-06-19).</p>
+</dd>
+<dt class="label" id="id18"><span class="brackets"><a class="fn-backref" href="#id5">sta</a></span></dt>
+<dd><p>Jährliche Fahrleistung des PKW in Deutschland 2020. URL: <a class="reference external" href="https://de.statista.com/statistik/daten/studie/183003/umfrage/pkw---gefahrene-kilometer-pro-jahr/">https://de.statista.com/statistik/daten/studie/183003/umfrage/pkw---gefahrene-kilometer-pro-jahr/</a> (visited on 2021-07-01).</p>
+</dd>
+<dt class="label" id="id20"><span class="brackets"><a class="fn-backref" href="#id7">Ren</a></span></dt>
+<dd><p>RENAULT ZOE E-TECH 100% elektrisch. URL: <a class="reference external" href="https://www.renault.de/elektromodelle/zoe.html">https://www.renault.de/elektromodelle/zoe.html</a> (visited on 2021-06-17).</p>
+</dd>
+<dt class="label" id="id17"><span class="brackets">Dou15</span><span class="fn-backref">(<a href="#id3">1</a>,<a href="#id4">2</a>)</span></dt>
 <dd><p>Thorben Doum. Notwendigkeit und Rahmenbedingungen eines Lastmanagements in Niederspannungsnetzen. <em>Technische Hochschule Köln</em>, 2015. URL: <a class="reference external" href="http://www.100pro-erneuerbare.com/netze/publikationen/2015-06-Doum/Doum-Lastmanagement_Elektromobilitaet.htm">http://www.100pro-erneuerbare.com/netze/publikationen/2015-06-Doum/Doum-Lastmanagement_Elektromobilitaet.htm</a> (visited on 2021-07-17).</p>
 </dd>
-<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id1">Ker11</a></span></dt>
+<dt class="label" id="id21"><span class="brackets"><a class="fn-backref" href="#id8">goi</a></span></dt>
+<dd><p>goingElectric. Stromtankstellen Statistik Deutschland \textbar  GoingElectric.de. URL: <a class="reference external" href="https://www.goingelectric.de/stromtankstellen/statistik/Deutschland">https://www.goingelectric.de/stromtankstellen/statistik/Deutschland</a> (visited on 2021-06-23).</p>
+</dd>
+<dt class="label" id="id14"><span class="brackets"><a class="fn-backref" href="#id1">Ker11</a></span></dt>
 <dd><p>Georg Kerber. Aufnahmefähigkeit von Niederspannungsverteilnetzen für die Einspeisung aus Photovoltaikkleinanlagen. <em>Technische Universität München</em>, pages 150, 2011.</p>
 </dd>
-<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id2">Sch08</a></span></dt>
+<dt class="label" id="id16"><span class="brackets"><a class="fn-backref" href="#id2">Sch08</a></span></dt>
 <dd><p>Andreas Schuster. Batterie- bzw. Wasserstoffspeicher bei elektrischen Fahrzeugen. <em>Technische Universität Wien</em>, 2008. URL: <a class="reference external" href="https://repositum.tuwien.at/handle/20.500.12708/12337">https://repositum.tuwien.at/handle/20.500.12708/12337</a> (visited on 2021-08-20).</p>
 </dd>
 </dl>

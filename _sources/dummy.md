@@ -119,13 +119,31 @@ It ist to see, that most people arrive at 18:00 and there is also another peak a
 ## The Distribution of travelled Distances
 
 
-blabla....
+The distribution of the travelled distances is taken from {cite:p}`statista_jahrliche_2021`. The vaues provided for 2020 are downscaled to one day (assuming 365 days driving per year). These downscaled values are given in the following table:
+
+|Distance travelled [km]|Probability [-]|
+|--|--|
+|7|0.13|
+|21|0.29|
+|35|0.30|
+|50|0.15|
+|60|0.13|
+
+These values determine the $d$ in Equation [](eq4). Furthermore the mean consumption of BEVs is taken as $c=17.7 \frac{kWh}{100km}$ and the battery capacity as $E_{nom}=52kWh$ (Values of the most sold BEV {cite:p}`ADAC_elektroautos_2021` according to {cite:p}`Renault_renault_2021`).
 
 
 ## The Distribution of the Nominal Power of the Charging Stations
 
 
-blabla....
+The distribution is taken from {cite:p}`goel_stromtankstellen_nodate`, only taken into account the first three categories. This results in the values given in the following table:
+
+|Charging power [kW]|probability|
+|--|--|
+|3.7|0.35|
+|11.1|0.55|
+|22.2|0.10|
+
+Thee values determine the $P_{max}$ in Equation [](eq1).
 
 
 (controlling_paragraph)=
