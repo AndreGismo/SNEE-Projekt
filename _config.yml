@@ -9,6 +9,8 @@ bibtex_bibfiles:
     - references.bib
 
 html:
+    use_repository_button: true
+    
     extra_navbar: |
         <div>
             <b>SNEE PG14 in SoSe2021</b><br>Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
@@ -22,3 +24,11 @@ html:
 sphinx:
     config:
         html_show_copyright: false
+        
+repository:
+    url: https://github.com/AndreGismo/SNEE-Projekt
+    branch: master
+    
+launch_buttons:
+    binderhub_url: "https://mybinder.org"
+    thebe: true
