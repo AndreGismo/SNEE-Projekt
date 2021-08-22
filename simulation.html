@@ -341,7 +341,7 @@
 </div>
 <div class="section" id="setting-parameters">
 <span id="settings"></span><h3>Setting Parameters<a class="headerlink" href="#setting-parameters" title="Permalink to this headline">¶</a></h3>
-<p>As next step, some parameters determing the simulation have to be set:</p>
+<p>As next step, some parameters determining the simulation have to be set:</p>
 <ul class="simple">
 <li><p>the resolution of the simulation (minimum 1 minute)</p></li>
 <li><p>whether to include some BEVs arriving at the same time</p></li>
@@ -355,7 +355,7 @@
 The <code class="docutils literal notranslate"><span class="pre">resolution</span></code> influences the <span class="math notranslate nohighlight">\(\Delta t\)</span> from Equation <a class="reference internal" href="dummy.html#equation-eq5">(5)</a> and thus the granularity of the whole simulation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resolution</span> <span class="o">=</span> <span class="s1">&#39;15min&#39;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resolution</span> <span class="o">=</span> <span class="s1">&#39;3min&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -364,7 +364,7 @@ The <code class="docutils literal notranslate"><span class="pre">resolution</spa
 This way it is possible to manipulate the arrival statistic depicted <a class="reference internal" href="dummy.html#fig5"><span class="std std-ref">Figure 5</span></a>, allowing it to simulate extreme scenarios, where all the BEVs arrive at the same time.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">same_arrival</span> <span class="o">=</span> <span class="kc">False</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">same_arrival</span> <span class="o">=</span> <span class="kc">True</span>
 
 <span class="c1"># arrival_time needs to be set in multiples of quarter hours</span>
 <span class="n">arrival_time</span> <span class="o">=</span> <span class="mi">46</span>
@@ -376,7 +376,7 @@ This way it is possible to manipulate the arrival statistic depicted <a class="r
 This way it is possible to manipulate the distibution of the nominal power of the charging stations.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">same_power</span> <span class="o">=</span> <span class="kc">False</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">same_power</span> <span class="o">=</span> <span class="kc">True</span>
 
 <span class="c1"># nominal charging power [kW]</span>
 <span class="n">loading_power</span> <span class="o">=</span> <span class="mf">11.1</span>
@@ -388,7 +388,7 @@ This way it is possible to manipulate the distibution of the nominal power of th
 This makes it possible to adjust the travelled distance of the BEVs, thus determining the state of charge according to Equation <a class="reference internal" href="dummy.html#equation-eq4">(4)</a> when the charging starts.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">same_travelled</span> <span class="o">=</span> <span class="kc">False</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">same_travelled</span> <span class="o">=</span> <span class="kc">True</span>
 
 <span class="c1"># travelled distance [km]</span>
 <span class="n">distance_travelled</span> <span class="o">=</span> <span class="mi">200</span>
@@ -409,7 +409,7 @@ This makes it possible to simulate different powerfactors by adding reactive pow
 This enables the controller.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">controlling</span> <span class="o">=</span> <span class="kc">False</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">controlling</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 </div>
 </div>
@@ -419,8 +419,8 @@ This way the controlling parameters described in <a class="reference internal" h
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">controlling</span><span class="p">:</span>
-    <span class="n">ControllableBattery</span><span class="o">.</span><span class="n">set_control_params</span><span class="p">(</span><span class="s1">&#39;Ki&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
-    <span class="n">ControllableBattery</span><span class="o">.</span><span class="n">set_control_params</span><span class="p">(</span><span class="s1">&#39;Kd&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">ControllableBattery</span><span class="o">.</span><span class="n">set_control_params</span><span class="p">(</span><span class="s1">&#39;Ki&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ControllableBattery</span><span class="o">.</span><span class="n">set_control_params</span><span class="p">(</span><span class="s1">&#39;Kd&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -441,6 +441,8 @@ This way the controlling parameters described in <a class="reference internal" h
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># &#39;Szenario0&#39;, &#39;Szenario30&#39;, &#39;Szenario50&#39;, &#39;Szenario80&#39; or &#39;Szenario100&#39;</span>
 <span class="n">scenario</span> <span class="o">=</span> <span class="n">Scenario</span><span class="o">.</span><span class="n">load_scenario</span><span class="p">(</span><span class="s1">&#39;Szenario100&#39;</span><span class="p">)</span>
+<span class="c1"># apply the resolution to the scenario</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">set_resolution</span><span class="p">(</span><span class="n">resolution</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -559,7 +561,7 @@ This way the controlling parameters described in <a class="reference internal" h
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Maximal belasteter Bus: 273
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Maximal belasteter Bus: 285
 Maximal belastete Leitung: 220
 </pre></div>
 </div>
