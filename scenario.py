@@ -62,6 +62,7 @@ class Scenario:
         self.num_chargers = int(np.round(self.num_loads * penetration/100, 0))
         self.loads_available = list(net.load.index)
         self.resolution = None
+        self.factor = None
         
         self.scenario_data = pd.DataFrame(index=range(self.num_chargers),
              columns=['load nr.', 'according bus nr.', 'charging power [kW]', 'time of arrival',
@@ -79,15 +80,16 @@ class Scenario:
         
     def adapt_resolution(self):
         if self.resolution == '15min':
+            self.factor = 1
             pass
         
         else:
             # welcher Konversionsfaktor ergibt sich aus der neuen resolution
-            factor = 15 / int(self.resolution.rstrip('min'))
+            self.factor = 15 / int(self.resolution.rstrip('min'))
             
             # Verteilung der Ankunftzeiten entsprechend modifizieren
             self.scenario_data.loc[:, 'time of arrival'] =\
-            self.scenario_data['time of arrival'] * factor
+            self.scenario_data['time of arrival'] * self.factor
         
         
     def get_corresponding_bus(self):
@@ -143,16 +145,14 @@ class Scenario:
                 if parameter != 'time of arrival':
                     copied.scenario_data.loc[:, parameter] = value
                 else:
-                    copied.scenario_data.loc[:, parameter] = value *\
-                        15/int(self.resolution.rstrip('min'))
+                    copied.scenario_data.loc[:, parameter] = value * self.factor
             else:
                 for load in at_load:
                     filt = copied.scenario_data['load nr.'] == load
                     if parameter != 'time of arrival':
                         copied.scenario_data.loc[filt, parameter] = value
                     else:
-                        copied.scenario_data.loc[filt, parameter] = value *\
-                            15/int(self.resolution.rstrip('min'))
+                        copied.scenario_data.loc[filt, parameter] = value * self.factor
             return copied
         
         else:
@@ -160,18 +160,15 @@ class Scenario:
                 if parameter != 'time of arrival':
                     self.scenario_data.loc[:, parameter] = value
                 else:
-                    self.scenario_data.loc[:, parameter] = value *\
-                        15/int(self.resolution.rstrip('min'))
+                    self.scenario_data.loc[:, parameter] = value * self.factor
             else:
                 for load in at_load:
                     filt = self.scenario_data['load nr.'] == load
                     if parameter != 'time of arrival':
                         self.scenario_data.loc[filt, parameter] = value
                     else:
-                        self.scenario_data.loc[filt, parameter] = value *\
-                            15/int(self.resolution.rstrip('min'))
+                        self.scenario_data.loc[filt, parameter] = value * self.factor
                 
-        
         
         
     @staticmethod
