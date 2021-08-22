@@ -9,6 +9,12 @@ Eintragen der einzelnen Werte aus ihrem jeweilgen datasource in die loads vom ne
 gibt? nicht jeder Knoten hat im net[res_bus] eine Leistung anliegen (???)
 =>vielleicht am level etwas ändern vom BatteryController?
 
+----------------------------------------
+bei Ladesäulen mit 22kW steigt die Leistung weiter nach dem Einschalten
+=> müsste ja eigentlich sinken!!
+=> irgendwas mit der P(SOC)-Formel (vielleicht passt das verhältnis von power/p_ls
+                                    nicht mehr?)
+
 bestes Regelergebnis (geringtste Spnnungsband-Verletzungen): 312
 F_end = 0.4, U_start = 0.01, U_end = 0.06, ki = 0.5, vals_to_sum = 15, kd = 0
 """
@@ -36,15 +42,15 @@ from battery_controller import BatteryController
 from controllable_battery import ControllableBattery
 
 #### zeitliche Auflösung der Simulation ######################################
-resolution = '1min'
+resolution = '3min'
 
 #### Variablen zum Steuern der simulierten Szenarien #########################
 # Ankunftszeit (in Viertelstunden => 0800 wäre 32)
-same_arrival = True
+same_arrival = False
 arrival_time = 46*15
 
 same_power = True
-loading_power = 11.1
+loading_power = 30
 
 same_travelled = True
 distance_travelled = 200
@@ -54,7 +60,7 @@ far_from_trafo = False
 near_trafo = False
 
 # soll geregelt werden?
-controlling = True
+controlling = False
 
 # wie hoch ist der PowerFactor der Haushalte?
 cosphi = 0.9
@@ -69,6 +75,7 @@ net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
 fun_scenario = Scenario.load_scenario('Szenario100')
+fun_scenario.set_resolution(resolution)
 
 if same_arrival:
     fun_scenario.set_constant('time of arrival', arrival_time, inplace=True)

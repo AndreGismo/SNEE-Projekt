@@ -61,6 +61,7 @@ class Scenario:
         self.penetration = penetration
         self.num_chargers = int(np.round(self.num_loads * penetration/100, 0))
         self.loads_available = list(net.load.index)
+        self.resolution = None
         
         self.scenario_data = pd.DataFrame(index=range(self.num_chargers),
              columns=['load nr.', 'according bus nr.', 'charging power [kW]', 'time of arrival',
@@ -69,6 +70,24 @@ class Scenario:
         
         #self.get_corresponding_buses()
         self.get_scenario_data()
+        
+        
+    def set_resolution(self, resolution):
+        self.resolution = resolution
+        self.adapt_resolution()
+        
+        
+    def adapt_resolution(self):
+        if self.resolution == '15min':
+            pass
+        
+        else:
+            # welcher Konversionsfaktor ergibt sich aus der neuen resolution
+            factor = 15 / int(self.resolution.rstrip('min'))
+            
+            # Verteilung der Ankunftzeiten entsprechend modifizieren
+            self.scenario_data.loc[:, 'time of arrival'] =\
+            self.scenario_data['time of arrival'] * factor
         
         
     def get_corresponding_bus(self):
