@@ -140,20 +140,36 @@ class Scenario:
         if not inplace:
             copied = copy.deepcopy(self)
             if at_load == None:
-                copied.scenario_data.loc[:, parameter] = value
+                if parameter != 'time of arrival':
+                    copied.scenario_data.loc[:, parameter] = value
+                else:
+                    copied.scenario_data.loc[:, parameter] = value *\
+                        15/int(self.resolution.rstrip('min'))
             else:
                 for load in at_load:
                     filt = copied.scenario_data['load nr.'] == load
-                    copied.scenario_data.loc[filt, parameter] = value
+                    if parameter != 'time of arrival':
+                        copied.scenario_data.loc[filt, parameter] = value
+                    else:
+                        copied.scenario_data.loc[filt, parameter] = value *\
+                            15/int(self.resolution.rstrip('min'))
             return copied
         
         else:
             if at_load == None:
-                self.scenario_data.loc[:, parameter] = value
+                if parameter != 'time of arrival':
+                    self.scenario_data.loc[:, parameter] = value
+                else:
+                    self.scenario_data.loc[:, parameter] = value *\
+                        15/int(self.resolution.rstrip('min'))
             else:
                 for load in at_load:
                     filt = self.scenario_data['load nr.'] == load
-                    self.scenario_data.loc[filt, parameter] = value
+                    if parameter != 'time of arrival':
+                        self.scenario_data.loc[filt, parameter] = value
+                    else:
+                        self.scenario_data.loc[filt, parameter] = value *\
+                            15/int(self.resolution.rstrip('min'))
                 
         
         

@@ -42,15 +42,15 @@ from battery_controller import BatteryController
 from controllable_battery import ControllableBattery
 
 #### zeitliche Auflösung der Simulation ######################################
-resolution = '3min'
+resolution = '1min'
 
 #### Variablen zum Steuern der simulierten Szenarien #########################
 # Ankunftszeit (in Viertelstunden => 0800 wäre 32)
-same_arrival = False
-arrival_time = 46*15
+same_arrival = True
+arrival_time = 46
 
 same_power = True
-loading_power = 30
+loading_power = 11.1
 
 same_travelled = True
 distance_travelled = 200
@@ -60,7 +60,7 @@ far_from_trafo = False
 near_trafo = False
 
 # soll geregelt werden?
-controlling = False
+controlling = True
 
 # wie hoch ist der PowerFactor der Haushalte?
 cosphi = 0.9

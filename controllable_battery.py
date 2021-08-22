@@ -28,6 +28,8 @@ class ControllableBattery:
     def __init__(self, net, at_load, according_bus, energy, power,
                  distance_travelled, consumption, arrival, u_ls=4.2, u_n=3.6,
                  i_ls=0.3, s=80, resolution=15):
+        if power not in [3.7, 11.1, 22.2]:
+            raise ValueError('Die power muss 3.7, 11.1 oder 22.2 betragen!')
         self.at_load = int(at_load)
         self.according_bus = int(according_bus)
         self.energy = energy 
@@ -43,6 +45,18 @@ class ControllableBattery:
         self.activate_controlling = False
         self.last_dus = []
         self.resolution = resolution
+        #den Faktor setzen, dass bei 22kw die Leistung ab 80% nicht steigt,
+        # sondern sinkt!
+        self.factor = None
+        self.apply_factor()
+        
+        
+    def apply_factor(self):
+        if self.power in [3.7, 11.1]:
+            self.factor = -1
+            
+        else:
+            self.factor = 1
         
         
     def register_datasource(self, datasource):
@@ -83,7 +97,7 @@ class ControllableBattery:
             elif self.current_soc >= 80 and self.current_soc < 100:
                 p_ls = self.u_ls/self.u_n * self.i_ls * self.energy
                 k_l = (100-self.s)/(np.log(self.power/p_ls))
-                self.current_power = self.power*np.exp(-(self.s-self.current_soc)/k_l)
+                self.current_power = self.power*np.exp(self.factor*(self.s-self.current_soc)/k_l)
                 
             else:
                 self.current_power = 0
