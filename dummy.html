@@ -253,7 +253,7 @@
               <div>
                 
   <div class="section" id="methodology-for-research">
-<span id="distributions"></span><h1>Methodology for Research<a class="headerlink" href="#methodology-for-research" title="Permalink to this headline">¶</a></h1>
+<h1>Methodology for Research<a class="headerlink" href="#methodology-for-research" title="Permalink to this headline">¶</a></h1>
 <p>In this chapter the methodology used for investigating the influences of BEV loading on the local grid is beeing discussed. This methodology is separated into 7 parts:</p>
 <ul class="simple">
 <li><p>choosing and implementing a reference grid</p></li>
@@ -348,7 +348,7 @@
 <span class="eqno">(5)<a class="headerlink" href="#equation-eq5" title="Permalink to this equation">¶</a></span>\[SOC_{n+1} = SOC_n + P(SOC_n) \cdot \Delta t\]</div>
 </div>
 <div class="section" id="the-distribution-of-arrival-times">
-<h2>The Distribution of Arrival Times<a class="headerlink" href="#the-distribution-of-arrival-times" title="Permalink to this headline">¶</a></h2>
+<span id="distributions"></span><h2>The Distribution of Arrival Times<a class="headerlink" href="#the-distribution-of-arrival-times" title="Permalink to this headline">¶</a></h2>
 <p>The distribution of arrival times is beeing adopted from <span id="id3">[<a class="reference internal" href="#id17">Dou15</a>]</span>. The following <a class="reference internal" href="#fig5"><span class="std std-ref">Figure 5</span></a> shows the distribution:</p>
 <div class="figure align-default" id="fig5">
 <a class="reference internal image-reference" href="_images/dist.png"><img alt="_images/dist.png" src="_images/dist.png" style="width: 700px;" /></a>
@@ -358,8 +358,9 @@
 </div>
 <div class="section" id="the-distribution-of-travelled-distances">
 <h2>The Distribution of travelled Distances<a class="headerlink" href="#the-distribution-of-travelled-distances" title="Permalink to this headline">¶</a></h2>
-<p>The distribution of the travelled distances is taken from <span id="id5">[<a class="reference internal" href="#id18">sta</a>]</span>. The vaues provided for 2020 are downscaled to one day (assuming 365 days driving per year). These downscaled values are given in the following table:</p>
-<table class="colwidths-auto table">
+<p>The distribution of the travelled distances is taken from <span id="id5">[<a class="reference internal" href="#id18">sta</a>]</span>. The vaues provided for 2020 are downscaled to one day (assuming 365 days driving per year). These downscaled values are given in the following <a class="reference internal" href="#tab2"><span class="std std-ref">Table 2</span></a>:</p>
+<table class="colwidths-auto table" id="tab2">
+<caption><span class="caption-number">Table 2 </span><span class="caption-text">Distribution of travelled distances</span><a class="headerlink" href="#tab2" title="Permalink to this table">¶</a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Distance travelled [km]</p></th>
 <th class="head"><p>Probability [-]</p></th>
@@ -387,11 +388,12 @@
 </div>
 <div class="section" id="the-distribution-of-the-nominal-power-of-the-charging-stations">
 <h2>The Distribution of the Nominal Power of the Charging Stations<a class="headerlink" href="#the-distribution-of-the-nominal-power-of-the-charging-stations" title="Permalink to this headline">¶</a></h2>
-<p>The distribution is taken from <span id="id8">[<a class="reference internal" href="#id21">goi</a>]</span>, only taken into account the first three categories. This results in the values given in the following table:</p>
-<table class="colwidths-auto table">
+<p>The distribution is taken from <span id="id8">[<a class="reference internal" href="#id21">goi</a>]</span>, only taken into account the first three categories. This results in the values given in the following <a class="reference internal" href="#tab3"><span class="std std-ref">Table 3</span></a>:</p>
+<table class="colwidths-auto table" id="tab3">
+<caption><span class="caption-number">Table 3 </span><span class="caption-text">Distribution of the charging power</span><a class="headerlink" href="#tab3" title="Permalink to this table">¶</a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Charging power [kW]</p></th>
-<th class="head"><p>probability</p></th>
+<th class="head"><p>Probability</p></th>
 </tr>
 </thead>
 <tbody>
@@ -427,11 +429,47 @@
 <p>This results in a controlled power <span class="math notranslate nohighlight">\(P_{control}\)</span> according to Equation <a class="reference internal" href="#equation-eq9">(9)</a>:</p>
 <div class="math notranslate nohighlight" id="equation-eq9">
 <span class="eqno">(9)<a class="headerlink" href="#equation-eq9" title="Permalink to this equation">¶</a></span>\[P_{control} = P \cdot (F - F_D - F_I)\]</div>
-<p>The complete control loop is shown in the following <a class="reference internal" href="#fig7"><span class="std std-ref">Figure 7</span></a></p>
+<p>The complete control loop is shown in the following <a class="reference internal" href="#fig7"><span class="std std-ref">Figure 7</span></a>.</p>
 <div class="figure align-default" id="fig7">
 <a class="reference internal image-reference" href="_images/control-loop.png"><img alt="_images/control-loop.png" src="_images/control-loop.png" style="width: 700px;" /></a>
 <p class="caption"><span class="caption-number">Fig. 7 </span><span class="caption-text">Controller loop</span><a class="headerlink" href="#fig7" title="Permalink to this image">¶</a></p>
 </div>
+<p>The following <a class="reference internal" href="#tab4"><span class="std std-ref">Table 4</span></a> list all the adjustable parameters of the controller:</p>
+<table class="colwidths-auto table" id="tab4">
+<caption><span class="caption-number">Table 4 </span><span class="caption-text">Parameters of the controller</span><a class="headerlink" href="#tab4" title="Permalink to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Default value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(F_{end}\)</span></p></td>
+<td><p>Factor at <span class="math notranslate nohighlight">\(\Delta U_{end}\)</span></p></td>
+<td><p>0.4</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\Delta U_{start}\)</span></p></td>
+<td><p>Voltage to start to lower charging power</p></td>
+<td><p>0.01</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\Delta U_{end}\)</span></p></td>
+<td><p>Voltage to stop to lower charging power</p></td>
+<td><p>0.06</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(K_D\)</span></p></td>
+<td><p>Differential proportionality factor</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(K_I\)</span></p></td>
+<td><p>Integration proportionality factor</p></td>
+<td><p>0.5</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(n\)</span></p></td>
+<td><p>Number of last values to calculate integral</p></td>
+<td><p>15</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="section" id="bibliography">

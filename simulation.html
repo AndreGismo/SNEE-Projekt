@@ -321,7 +321,7 @@
 <div class="margin sidebar">
 <p class="sidebar-title"></p>
 <div class="attention admonition">
-<p class="admonition-title">Hint</p>
+<p class="admonition-title">Attention</p>
 <p>The plot doesn’t reflect the lengths of the lines, but the correct lengths are stored in the <code class="docutils literal notranslate"><span class="pre">net</span></code></p>
 </div>
 </div>
@@ -373,7 +373,7 @@ This way it is possible to manipulate the arrival statistic depicted <a class="r
 </div>
 </div>
 <p><strong>Change the nominal power of the charging stations</strong>:<br>
-This way it is possible to manipulate the distibution of the nominal power of the charging stations.</p>
+This way it is possible to manipulate the distribution of the nominal power of the charging stations in <a class="reference internal" href="dummy.html#tab3"><span class="std std-ref">Table 3</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">same_power</span> <span class="o">=</span> <span class="kc">True</span>
@@ -385,7 +385,7 @@ This way it is possible to manipulate the distibution of the nominal power of th
 </div>
 </div>
 <p><strong>Change the travelled distance</strong>:<br>
-This makes it possible to adjust the travelled distance of the BEVs, thus determining the state of charge according to Equation <a class="reference internal" href="dummy.html#equation-eq4">(4)</a> when the charging starts.</p>
+This makes it possible to adjust the travelled distance of the BEVs described in <a class="reference internal" href="dummy.html#tab2"><span class="std std-ref">Table 2</span></a>, thus determining the state of charge according to Equation <a class="reference internal" href="dummy.html#equation-eq4">(4)</a> when the charging starts.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">same_travelled</span> <span class="o">=</span> <span class="kc">True</span>
@@ -415,7 +415,7 @@ This enables the controller.</p>
 </div>
 </div>
 <p><strong>Set the controlling parameters:</strong><br>
-This way the controlling parameters described in <a class="reference internal" href="dummy.html#controlling-paragraph"><span class="std std-ref">here</span></a>.</p>
+This way the controlling parameters described in <a class="reference internal" href="dummy.html#tab4"><span class="std std-ref">Table 4</span></a> can be altered.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">controlling</span><span class="p">:</span>
@@ -436,7 +436,7 @@ This way the controlling parameters described in <a class="reference internal" h
 </div>
 <p>However, this might change the underlying distributions (as the seed used for generating random choices isn’t fixed).</p>
 </div>
-<p>Next choose one of the <a class="reference internal" href="intro.html#scenarios"><span class="std std-ref">proposed scenarios</span></a>. The scenarios satisfy all of the <a class="reference internal" href="dummy.html#distributions"><span class="std std-ref">proposed distributions</span></a> but might be altered by the <a class="reference internal" href="#settings"><span class="std std-ref">settings choosen above</span></a>.</p>
+<p>Next choose one of the <a class="reference internal" href="intro.html#tab1"><span class="std std-ref">proposed scenarios</span></a>. The scenarios satisfy all of the <a class="reference internal" href="dummy.html#distributions"><span class="std std-ref">proposed distributions</span></a> but might be altered by the <a class="reference internal" href="#settings"><span class="std std-ref">settings choosen above</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># &#39;Szenario0&#39;, &#39;Szenario30&#39;, &#39;Szenario50&#39;, &#39;Szenario80&#39; or &#39;Szenario100&#39;</span>

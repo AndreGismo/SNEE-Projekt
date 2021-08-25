@@ -1,4 +1,3 @@
-(distributions)= 
 # Methodology for Research
 
 
@@ -102,6 +101,7 @@ SOC_{n+1} = SOC_n + P(SOC_n) \cdot \Delta t
 ```
 
 
+(distributions)=
 ## The Distribution of Arrival Times
 
 
@@ -119,8 +119,10 @@ It ist to see, that most people arrive at 18:00 and there is also another peak a
 ## The Distribution of travelled Distances
 
 
-The distribution of the travelled distances is taken from {cite:p}`statista_jahrliche_2021`. The vaues provided for 2020 are downscaled to one day (assuming 365 days driving per year). These downscaled values are given in the following table:
+The distribution of the travelled distances is taken from {cite:p}`statista_jahrliche_2021`. The vaues provided for 2020 are downscaled to one day (assuming 365 days driving per year). These downscaled values are given in the following [Table 2](tab2):
 
+```{table} Distribution of travelled distances
+:name: tab2
 |Distance travelled [km]|Probability [-]|
 |--|--|
 |7|0.13|
@@ -128,6 +130,7 @@ The distribution of the travelled distances is taken from {cite:p}`statista_jahr
 |35|0.30|
 |50|0.15|
 |60|0.13|
+```
 
 These values determine the $d$ in Equation [](eq4). Furthermore the mean consumption of BEVs is taken as $c=17.7 \frac{kWh}{100km}$ and the battery capacity as $E_{nom}=52kWh$ (Values of the most sold BEV {cite:p}`ADAC_elektroautos_2021` according to {cite:p}`Renault_renault_2021`).
 
@@ -135,13 +138,16 @@ These values determine the $d$ in Equation [](eq4). Furthermore the mean consump
 ## The Distribution of the Nominal Power of the Charging Stations
 
 
-The distribution is taken from {cite:p}`goel_stromtankstellen_nodate`, only taken into account the first three categories. This results in the values given in the following table:
+The distribution is taken from {cite:p}`goel_stromtankstellen_nodate`, only taken into account the first three categories. This results in the values given in the following [Table 3](tab3):
 
-|Charging power [kW]|probability|
+```{table} Distribution of the charging power
+:name: tab3
+|Charging power [kW]|Probability|
 |--|--|
 |3.7|0.35|
 |11.1|0.55|
 |22.2|0.10|
+```
 
 These values determine the $P_{max}$ in Equation [](eq1).
 
@@ -158,7 +164,7 @@ As a controller serves as a $P(U)$ controlling according the characteristic in t
 Characteristic of the controller
 ```
 
-The characteristic represents the P-element of the controller. The voltage drop $\Delta U$ is defied according Equation [Equation 6](eq6):
+The characteristic represents the P-element of the controller. The voltage drop $\Delta U$ is defied according Equation [](eq6):
 
 ```{math}
 :label: eq6
@@ -186,12 +192,26 @@ This results in a controlled power $P_{control}$ according to Equation [](eq9):
 P_{control} = P \cdot (F - F_D - F_I)
 ```
 
-The complete control loop is shown in the following [Figure 7](fig7)
+The complete control loop is shown in the following [Figure 7](fig7).
 
 ```{figure} img/control-loop.png
 :name: fig7
 :width: 700px
 Controller loop
+```
+
+The following [Table 4](tab4) list all the adjustable parameters of the controller:
+
+```{table} Parameters of the controller
+:name: tab4
+|Parameter|Meaning|Default value|
+|--|--|--|
+|$F_{end}$|Factor at $\Delta U_{end}$|0.4|
+|$\Delta U_{start}$|Voltage to start to lower charging power|0.01|
+|$\Delta U_{end}$|Voltage to stop to lower charging power|0.06|
+|$K_D$|Differential proportionality factor|0|
+|$K_I$|Integration proportionality factor|0.5|
+|$n$|Number of last values to calculate integral|15|
 ```
 
 
