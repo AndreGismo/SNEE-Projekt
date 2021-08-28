@@ -38,7 +38,7 @@ class BatteryController(control.controller.const_control.ConstControl):
     voltage_violations = 0
     violated_buses = set()
     
-    def __init__(self, net, element, variable, element_index, batteries, data_source=None,
+    def __init__(self, net, element, variable, element_index, batteries, data_source=None, second_ds=None,
                  in_service=True, recycle=False, order=0, level=0, **kwargs):
         super().__init__(net, in_service=in_service, recycle=recycle, data_source=data_source,
                          element_index=element_index, order=order, level=level,
@@ -54,6 +54,7 @@ class BatteryController(control.controller.const_control.ConstControl):
         self.prepare_net_status(net)
         self.register_for_batteries()
         self.activate_controlling = False
+        self.second_ds = second_ds
         
     
     def activate_contolling(self):
@@ -91,12 +92,25 @@ class BatteryController(control.controller.const_control.ConstControl):
                     #pass
         
         # die normale time_step ausführen
-        super().time_step(net, time)
+        #super().time_step(net, time)
+        self.values = self.data_source.get_time_step_value(time, self.profile_name)
+        self.write_with_loc(net, time)
         self.check_violations(net, time)
     
     
-    def write_with_loc(self, net):
+    def write_with_loc(self, net, time):
+        # erstmal die Werte zu dem timestep aus der Datasource vom ConstController
+        # der Ps holen (dann barucht man diesen Controller auch nicht mehr)
+        # => dann die Werte an dieselbe Stelle schreiben, wo gleich darauf die
+        # Werte aus der eigenen DataSource reinkommen
+        sds_values = self.second_ds.get_time_step_value(time, net.load.index)
+        self.values += sds_values
+        #net[self.element].loc[net.load.index, self.variable] = sds_values
         net[self.element].loc[self.element_index, self.variable] += self.values
+        print('\nmeine eigenen write_with_loc führt gerade aus!!')
+        if time == 95:
+            print('\nDatentyp von values:', self.values)
+            print('\nDatentype von sds_values:', sds_values)
         
         
     def check_violations(self, net, time):
