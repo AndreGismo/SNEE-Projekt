@@ -8,6 +8,10 @@ kann es sein, dass bei den drei controllern irgendwelche überschneidungen beim
 Eintragen der einzelnen Werte aus ihrem jeweilgen datasource in die loads vom net
 gibt? nicht jeder Knoten hat im net[res_bus] eine Leistung anliegen (???)
 =>vielleicht am level etwas ändern vom BatteryController?
+FEHLER ENTDECKT: in battery_controller wird in timestep() am Ende
+super().timestep() aufgerufen, was dazu führt, dass die write_with_loc() vom
+normlen ConstController aufgerufen wird, statt unsere eigene write_with_loc vom
+BatteryController.
 
 ----------------------------------------
 bei Ladesäulen mit 22kW steigt die Leistung weiter nach dem Einschalten
@@ -42,17 +46,17 @@ from battery_controller import BatteryController
 from controllable_battery import ControllableBattery
 
 #### zeitliche Auflösung der Simulation ######################################
-resolution = '1min'
+resolution = '15min'
 
 #### Variablen zum Steuern der simulierten Szenarien #########################
 # Ankunftszeit (in Viertelstunden => 0800 wäre 32)
-same_arrival = True
+same_arrival = False
 arrival_time = 46
 
-same_power = True
+same_power = False
 loading_power = 11.1
 
-same_travelled = True
+same_travelled = False
 distance_travelled = 200
 
 # macht nur Sinn, einen der beiden auf True zu setzen
@@ -60,7 +64,7 @@ far_from_trafo = False
 near_trafo = False
 
 # soll geregelt werden?
-controlling = True
+controlling = False
 
 # wie hoch ist der PowerFactor der Haushalte?
 cosphi = 0.9
@@ -74,7 +78,7 @@ ControllableBattery.set_control_params('Kd', 0.1)
 net = pn.create_kerber_vorstadtnetz_kabel_1()
 
 #### Szenario erzeugen #######################################################
-fun_scenario = Scenario.load_scenario('Szenario100')
+fun_scenario = Scenario.load_scenario('Szenario30')
 fun_scenario.set_resolution(resolution)
 
 if same_arrival:
@@ -129,11 +133,12 @@ load_controler = control.ConstControl(net, element='load', variable='p_mw',
 load_controler_q = control.ConstControl(net, element='load', variable='q_mvar',
                                       element_index=net.load.index,
                                       data_source=loads_q,
-                                      profile_name=net.load.index)
+                                      profile_name=net.load.index,)
 
 load_controller_bat = BatteryController(net, element='load', variable='p_mw',
                                         element_index=datasource_bat.columns,#loading_data.columns,
-                                        data_source=loads_bat, batteries=batteries)
+                                        data_source=loads_bat, batteries=batteries,
+                                        order=1, level=1)
 
 if controlling:
     load_controller_bat.activate_contolling()
