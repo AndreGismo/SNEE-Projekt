@@ -49,6 +49,8 @@
         const thebe_selector_output = ".output,.cell_output"
     </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Methodology for Research" href="dummy.html" />
@@ -309,16 +311,30 @@
 <span id="scenarios"></span><h2>Goal of this Work<a class="headerlink" href="#goal-of-this-work" title="Permalink to this headline">¶</a></h2>
 <p>Goal of this work is to study the effects of different levels of penetration of BEVs in suburban areas on the stability of the grid. Therefor a python tool using <a class="reference external" href="https://pandapower.readthedocs.io/en/develop/index.html"><em>pandapower</em></a> is beeing developed to simulate the grid. For modelling different levels of penetration of BEVs, some scenarios are beeing introduced.</p>
 <p><strong>Stability of the Grid:</strong><br>
-To assess the stability of the grid, the following parameters are beeing observed:</p>
-<ul class="simple">
-<li><p>Loading of the transformer</p></li>
-<li><p>Loading of the most loaded line</p></li>
-<li><p>Voltage of the most loaded node</p></li>
-</ul>
-<p><strong>Simulated Scenarios:</strong><br>
-The following Scenarios in <a class="reference internal" href="#tab1"><span class="std std-ref">Table 1</span></a> are beeing consideres to model different levels of penetration of BEVs:</p>
+To assess the stability of the grid, the following parameters given in <a class="reference internal" href="#tab1"><span class="std std-ref">Table 1</span></a> are beeing observed:</p>
 <table class="colwidths-auto table" id="tab1">
-<caption><span class="caption-number">Table 1 </span><span class="caption-text">Considered scenarios</span><a class="headerlink" href="#tab1" title="Permalink to this table">¶</a></caption>
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Observed parameters</span><a class="headerlink" href="#tab1" title="Permalink to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Criterion</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Loading of the transformer</p></td>
+<td><p><span class="math notranslate nohighlight">\(&lt; 100 \%\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Loading of the most loaded line</p></td>
+<td><p><span class="math notranslate nohighlight">\(&lt; 100 \%\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Voltage of the most loaded node</p></td>
+<td><p><span class="math notranslate nohighlight">\(&gt; 376 V\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Simulated Scenarios:</strong><br>
+The following Scenarios in <a class="reference internal" href="#tab2"><span class="std std-ref">Table 2</span></a> are beeing considered to model different levels of penetration of BEVs:</p>
+<table class="colwidths-auto table" id="tab2">
+<caption><span class="caption-number">Table 2 </span><span class="caption-text">Considered scenarios</span><a class="headerlink" href="#tab2" title="Permalink to this table">¶</a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Scenario</p></th>
 <th class="head"><p>Penetration</p></th>
