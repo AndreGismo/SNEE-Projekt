@@ -99,18 +99,19 @@ class BatteryController(control.controller.const_control.ConstControl):
     
     
     def write_with_loc(self, net, time):
-        # erstmal die Werte zu dem timestep aus der Datasource vom ConstController
-        # der Ps holen (dann barucht man diesen Controller auch nicht mehr)
-        # => dann die Werte an dieselbe Stelle schreiben, wo gleich darauf die
-        # Werte aus der eigenen DataSource reinkommen
+        # hier übernimmt der BatteryController zusätzlich die Funktion des
+        # ConstControl der SLPs (statt wie früher einen eigenen ConstControl
+        # für die SLPs zu haben, schreibt jetzt der BatteryController die Werte
+        # der jeweiligen Loads mit ins net)
+        #sds_values = self.second_ds.get_time_step_value(time, net.load.index)
+        # bei weniger als 100% penetration passen die Dimensionen von sds_values
+        # nicht mehr zu denen von self.values (ndarray nur so lang wie es 
+        # Batteries gibt)
+        # Erstmal auf die second_ds die Werte slef.values draufaddieren
         sds_values = self.second_ds.get_time_step_value(time, net.load.index)
         self.values += sds_values
-        #net[self.element].loc[net.load.index, self.variable] = sds_values
-        net[self.element].loc[self.element_index, self.variable] += self.values
-        print('\nmeine eigenen write_with_loc führt gerade aus!!')
-        if time == 95:
-            print('\nDatentyp von values:', self.values)
-            print('\nDatentype von sds_values:', sds_values)
+        
+        net[self.element].loc[self.element_index, self.variable] = self.values
         
         
     def check_violations(self, net, time):
@@ -119,13 +120,10 @@ class BatteryController(control.controller.const_control.ConstControl):
                 type(self).voltage_violations += 1
                 type(self).violated_buses.add(num)
             
-            #print('Spannung: ', voltage)
             delta_u = 1 - voltage
-            #print('\ndelta u: ', delta_u)
             self.net_status.at[num, 'delta voltage'] = delta_u
             #if type(self).voltage_violations >= 1:
                 #self.need_action = True
-                #print('\nhallo, ich wurde ausgeführt :)')
         
     
     #TODO
