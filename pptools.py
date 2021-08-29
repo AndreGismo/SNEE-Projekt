@@ -94,9 +94,14 @@ def prepare_batteries(net, scenario, resolution):
                                   resolution=resolution)
         batteries.append(bat)
         
-    columns = scenario.scenario_data['load nr.'].astype(int)
-    datasource = pd.DataFrame(index=list(range(int(24*60/resolution))), columns=columns)
-        
+    #columns = scenario.scenario_data['load nr.'].astype(int)
+    datasource = pd.DataFrame(index=list(range(int(24*60/resolution))), columns=net.load.index)
+    # nur diejenigen Columns mit 0 füllen, die loads ohne ladesäule darstellen:
+    #for col in datasource.columns:
+        #if not col in columns:
+            #datasource.loc[:, col] = 0.0
+            
+    datasource.fillna(0.0, inplace=True) 
     return batteries, datasource # müssen an BatteryControler übergeben werden
 
 
