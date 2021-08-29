@@ -36,7 +36,7 @@ As a SLP serves a profile "H0A" of [N_ERGIE netz](https://www.n-ergie-netz.de/st
 
 ```{figure} img/slp.png
 :name: fig3
-:width: 700px
+:width: 900px
 Load profile of the used SLP
 ```
 
@@ -119,10 +119,10 @@ It ist to see, that most people arrive at 18:00 and there is also another peak a
 ## The Distribution of travelled Distances
 
 
-The distribution of the travelled distances is taken from {cite:p}`statista_jahrliche_2021`. The vaues provided for 2020 are downscaled to one day (assuming 365 days driving per year). These downscaled values are given in the following [Table 2](tab2):
+The distribution of the travelled distances is taken from {cite:p}`statista_jahrliche_2021`. The vaues provided for 2020 are downscaled to one day (assuming 365 days driving per year). These downscaled values are given in the following [Table 3](tab3):
 
 ```{table} Distribution of travelled distances
-:name: tab2
+:name: tab3
 |Distance travelled [km]|Probability [-]|
 |--|--|
 |7|0.13|
@@ -138,10 +138,10 @@ These values determine the $d$ in Equation [](eq4). Furthermore the mean consump
 ## The Distribution of the Nominal Power of the Charging Stations
 
 
-The distribution is taken from {cite:p}`goel_stromtankstellen_nodate`, only taken into account the first three categories. This results in the values given in the following [Table 3](tab3):
+The distribution is taken from {cite:p}`goel_stromtankstellen_nodate`, only taken into account the first three categories. This results in the values given in the following [Table 4](tab4):
 
 ```{table} Distribution of the charging power
-:name: tab3
+:name: tab4
 |Charging power [kW]|Probability|
 |--|--|
 |3.7|0.35|
@@ -200,10 +200,10 @@ The complete control loop is shown in the following [Figure 7](fig7).
 Controller loop
 ```
 
-The following [Table 4](tab4) list all the adjustable parameters of the controller:
+The following [Table 5](tab5) list all the adjustable parameters of the controller:
 
 ```{table} Parameters of the controller
-:name: tab4
+:name: tab5
 |Parameter|Meaning|Default value|
 |--|--|--|
 |$F_{end}$|Factor at $\Delta U_{end}$|0.4|

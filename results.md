@@ -1,7 +1,7 @@
 # Discussion of the Results
 
 
-In this chapter the results of simulating the different [scenarios](tab1) are beeing summarized. In the following the results for each component are discussed. Furthermore the effect of the controlling is discussed.
+In this chapter the results of simulating the different [scenarios](tab2) are beeing summarized. In the following the results for each component are discussed. Furthermore the effect of the controlling is discussed.
 
 
 ## Results of the Transformer
@@ -14,7 +14,7 @@ The loading of the transformer for the different scenarios is given in the follo
 
 ```{figure} img/res_trafo.png
 :name: fig8
-:width: 700px
+:width: 900px
 Simulation results for the transformer
 ```
 
@@ -28,7 +28,7 @@ The loading of the most loaded line for the different scenarios is given in the 
 
 ```{figure} img/res_line.png
 :name: fig9
-:width: 700px
+:width: 900px
 Simulation results for the most loaded line
 ```
 
@@ -42,7 +42,7 @@ The Voltage at the most loaded nodes for the different scenarios is given in the
 
 ```{figure} img/res_bus.png
 :name: fig10
-:width: 700px
+:width: 900px
 Simulation results for the most loaded nodes
 ```
 
@@ -55,7 +55,7 @@ Notice the changing nodes for different scenarios (these are always nodes near t
 ````{margin}
 ```{admonition} Hint
 :class: hint
-Worst-case means scenario E (100% penetration of BEVs) with all the BEVs arriving at the same time and having travelled 200km (so the SOC is low).
+Worst-case means scenario E (100% penetration of BEVs) with all the BEVs arriving at the same time and having travelled 200km (so the SOC is low), all charging stations are 11 kW.
 ```
 ````
 
@@ -63,7 +63,7 @@ The following [Figure 11](fig11) shows the voltage at the most loaded node for t
 
 ```{figure} img/res_controlling.png
 :name: fig11
-:width: 700px
+:width: 900px
 Simulation results for the controlling
 ```
 
