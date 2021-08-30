@@ -24,6 +24,8 @@ html:
 sphinx:
     config:
         html_show_copyright: false
+        html_js_files:
+        - https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js
         
 repository:
     url: https://github.com/AndreGismo/SNEE-Projekt
